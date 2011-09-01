@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +42,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StandardClusterTest {
-		
+
 	private StandardCluster fruit;
 	private Apple appleCore;
 	private Module appleModule;
@@ -31,7 +51,7 @@ public class StandardClusterTest {
 	private Elstar elstar;
 	private Module elstarModule;
 
-	
+
 	private StandardCluster cluster;
 	private Notifier notifier;
 	private Listener listener1;
@@ -39,7 +59,7 @@ public class StandardClusterTest {
 	private Module notifierModule;
 	private Module listenerModule1;
 	private Module listenerModule2;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		fruit = new StandardCluster();
@@ -48,7 +68,7 @@ public class StandardClusterTest {
 		bananaCore = new Banana(27);
 		bananaModule = new StandardModule(bananaCore);
 		elstar = new Elstar();
-		elstarModule =  new StandardModule(elstar);
+		elstarModule = new StandardModule(elstar);
 
 		cluster = new StandardCluster();
 		notifier = new Notifier();
@@ -58,13 +78,13 @@ public class StandardClusterTest {
 		listenerModule1 = new StandardModule(listener1);
 		listenerModule2 = new StandardModule(listener2);
 	}
-	
+
 	@Test
 	public void testCluster() throws Exception {
 		assertFalse(Cluster.class.isAssignableFrom(Layer.class));
 		assertFalse(Layer.class.isAssignableFrom(Cluster.class));
 	}
-	
+
 	@Test
 	public void testConnectInternalModule() throws Exception {
 		assertEquals(0, fruit.getInternalModules().size());
@@ -117,7 +137,8 @@ public class StandardClusterTest {
 			fruit.asLayer().connect(appleModule);
 			fail("ConfigurationException expected");
 		}
-		catch(ConfigurationException expected) {}
+		catch (ConfigurationException expected) {
+		}
 	}
 
 	@Test
@@ -127,7 +148,8 @@ public class StandardClusterTest {
 			fruit.connect("apple", appleModule);
 			fail("ConfigurationException expected");
 		}
-		catch(ConfigurationException expected) {}
+		catch (ConfigurationException expected) {
+		}
 	}
 
 	@Test
@@ -137,7 +159,8 @@ public class StandardClusterTest {
 			fruit.asLayer().connect(appleModule);
 			fail("ConfigurationException expected");
 		}
-		catch(ConfigurationException expected) {}
+		catch (ConfigurationException expected) {
+		}
 	}
 
 	@Test
@@ -147,7 +170,8 @@ public class StandardClusterTest {
 			fruit.connect("apple", appleModule);
 			fail("ConfigurationException expected");
 		}
-		catch(ConfigurationException expected) {}
+		catch (ConfigurationException expected) {
+		}
 	}
 
 	@Test
@@ -181,23 +205,25 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException eexpected) {}
-		
+		}
+		catch (NullPointerException eexpected) {
+		}
+
 		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
 		fruit.asLayer().connect(appleModule);
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
 	@Test
 	public void testConnectInjectionInExternalModule2() throws Exception {
-				
+
 		fruit.asLayer().connect(appleModule);
 		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
-	
+
 
 	@Test
 	public void testConnectInjectionInExternalModule3() throws Exception {
@@ -206,23 +232,27 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException eexpected) {}
+		}
+		catch (NullPointerException eexpected) {
+		}
 	}
 
 	@Test
 	public void testConnectInjectionInExternalModule4() throws Exception {
-				
+
 		fruit.asLayer().connect(appleModule);
 		fruit.connect("banana", bananaModule);
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException expected) {}
+		}
+		catch (NullPointerException expected) {
+		}
 	}
 
 	@Test
 	public void testDisconnectInternalModuleFromExternal() throws Exception {
-		
+
 		fruit.connect("banana", bananaModule, BananaInterface.class);
 		fruit.asLayer().connect(appleModule);
 
@@ -235,19 +265,21 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		} catch (NullPointerException e) {}
-	
+		}
+		catch (NullPointerException e) {
+		}
+
 	}
 
 	@Test
 	public void testDisconnectExternalModuleFromInternal() throws Exception {
-		
+
 		fruit.connect("banana", bananaModule, BananaInterface.class);
 		fruit.asLayer().connect(appleModule);
 
 
 		assertEquals(27, appleCore.getIntFromBanana());
-		
+
 		fruit.asLayer().disconnect(appleModule);
 
 		assertEquals(0, fruit.getExternalModules().size());
@@ -255,10 +287,12 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		} catch (NullPointerException e) {}
-	
+		}
+		catch (NullPointerException e) {
+		}
+
 	}
-	
+
 	@Test
 	public void testDisconnectDoubleConnectedInternalModule() throws Exception {
 		fruit.connect("red apple", appleModule);
@@ -269,12 +303,12 @@ public class StandardClusterTest {
 
 	@Test
 	public void testDisconnectInjectionInInternalModule() throws Exception {
-		
+
 		fruit.connect("banana", bananaModule);
 		fruit.connect("apple", appleModule);
 
 		assertEquals(27, appleCore.getIntFromBanana());
-		
+
 		fruit.disconnect(bananaModule);
 
 		assertEquals(1, fruit.getInternalModules().size());
@@ -282,18 +316,20 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		} catch (NullPointerException e) {}
-	
+		}
+		catch (NullPointerException e) {
+		}
+
 	}
 
 	@Test
 	public void testDisconnectInjectionInInternalModule2() throws Exception {
-		
+
 		fruit.connect("banana", bananaModule);
 		fruit.connect("apple", appleModule);
 
 		assertEquals(27, appleCore.getIntFromBanana());
-		
+
 		fruit.disconnect(appleModule);
 
 		assertEquals(1, fruit.getInternalModules().size());
@@ -301,8 +337,10 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		} catch (NullPointerException e) {}
-	
+		}
+		catch (NullPointerException e) {
+		}
+
 	}
 
 	@Test
@@ -313,11 +351,13 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		} catch (NullPointerException e) {}
-		
+		}
+		catch (NullPointerException e) {
+		}
+
 		fruit.connect("banana", bananaModule);
 		fruit.connect("apple", appleModule);
-		
+
 		assertEquals(2, fruit.getInternalModules().size());
 
 		assertEquals(27, appleCore.getIntFromBanana());
@@ -325,14 +365,13 @@ public class StandardClusterTest {
 
 	@Test
 	public void testConnectInjectionInInternalModule2() throws Exception {
-				
+
 		fruit.connect("apple", appleModule);
 		fruit.connect("banana", bananaModule);
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
-	
-	
+
 
 	@Test
 	public void testConnectExternalModulesMustNotRegisterListeners() throws Exception {
@@ -464,7 +503,7 @@ public class StandardClusterTest {
 		cluster.connect("listener2", listenerModule2);
 		assertEquals(4, cluster.getInternalModules().size());
 		assertEquals(2, notifier.getNrofRegisteredListeners());
-		
+
 		cluster.disconnect(listenerModule1);
 		assertEquals(2, cluster.getInternalModules().size());
 		assertEquals(1, notifier.getNrofRegisteredListeners());
@@ -480,7 +519,7 @@ public class StandardClusterTest {
 		cluster.asLayer().disconnect(listenerModule2);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 	}
-	
+
 	@Test
 	public void testDisconnectRegisterExternalListenersFromUnexposedModule2() throws Exception {
 
@@ -505,12 +544,16 @@ public class StandardClusterTest {
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		} catch (ConfigurationException expected) {}
+		}
+		catch (ConfigurationException expected) {
+		}
 		fruit.connect("apple", appleModule);
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		} catch (ConfigurationException expected) {}
+		}
+		catch (ConfigurationException expected) {
+		}
 		fruit.disconnect(appleModule);
 		fruit.connect("apple", appleModule, appleModule.getInterfaces());
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
@@ -518,10 +561,12 @@ public class StandardClusterTest {
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		} catch (ConfigurationException expected) {}
+		}
+		catch (ConfigurationException expected) {
+		}
 	}
 
-	
+
 	@Test
 	public void testExpose() throws Exception {
 
@@ -532,8 +577,7 @@ public class StandardClusterTest {
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
 	}
 
-	
-	
+
 	@Test
 	public void testExpose2() throws Exception {
 		fruit.connect("apple", elstarModule, AppleInterface.class);
@@ -552,10 +596,12 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException eexpected) {}
+		}
+		catch (NullPointerException eexpected) {
+		}
 		fruit.expose("banana", bananaModule.getInterfaces());
 		fruit.asLayer().connect(appleModule);
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
@@ -566,10 +612,12 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException eexpected) {}
+		}
+		catch (NullPointerException eexpected) {
+		}
 
 		fruit.expose("banana", bananaModule.getInterfaces());
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
@@ -579,7 +627,7 @@ public class StandardClusterTest {
 		fruit.connect("banana", bananaModule);
 		fruit.expose("banana", bananaModule.getInterfaces());
 		fruit.asLayer().connect(appleModule);
-		
+
 		assertEquals(27, appleCore.getIntFromBanana());
 
 		fruit.expose("banana", new Class<?>[0]);
@@ -587,24 +635,26 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		} catch (NullPointerException eexpected) {}
+		}
+		catch (NullPointerException eexpected) {
+		}
 	}
 
 
-	
 	@Test
 	public void testGetProxy() {
-		
-		
+
+
 		//AppleInterface is exposed
 		fruit.connect("elstar", elstarModule, AppleInterface.class);
 		//  so it can be obtained
-		AppleInterface appleProxy = (AppleInterface)fruit.asLayer().getProxy("elstar", AppleInterface.class);
-		
+		AppleInterface appleProxy = (AppleInterface) fruit.asLayer().getProxy("elstar", AppleInterface.class);
+
 		try {
-			ElstarInterface elstarProxy = (ElstarInterface)fruit.asLayer().getProxy("elstar", ElstarInterface.class);
+			ElstarInterface elstarProxy = (ElstarInterface) fruit.asLayer().getProxy("elstar", ElstarInterface.class);
 			fail("ElstarInterface is not supposed to be exposed");
 		}
-		catch(ConfigurationException expected) {}
+		catch (ConfigurationException expected) {
+		}
 	}
 }

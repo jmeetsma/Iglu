@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration.util;
 
 import java.lang.reflect.Method;
@@ -27,13 +47,13 @@ public class MethodInvoker {
 
 	public Object invoke() throws InvocationTargetException, NoSuchMethodException {
 		tryInvokeExactSignature();
-		if(!invocationSucceeded) {
+		if (!invocationSucceeded) {
 			tryInvokeWithConvertedArguments();
 		}
-		if(invocationSucceeded) {
+		if (invocationSucceeded) {
 			return retval;
 		}
-		if(failedInvocation != null) {
+		if (failedInvocation != null) {
 			throw failedInvocation;
 		}
 		throw new NoSuchMethodException("arguments " + Arrays.asList(initArgs) + " not suitable for method '" + methodName + "'");
@@ -48,7 +68,8 @@ public class MethodInvoker {
 					retval = invokePublicMethod(impl, initArgs, methods[i]);
 					invocationSucceeded = true;
 					return;
-				} catch (IllegalArgumentException iae) {
+				}
+				catch (IllegalArgumentException iae) {
 					failedInvocation = iae;
 				}
 			}
@@ -60,14 +81,15 @@ public class MethodInvoker {
 			Method method = impl.getClass().getMethod(methodName, getInintArgTypes(initArgs));
 			retval = invokePublicMethod(impl, initArgs, method);
 			invocationSucceeded = true;
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e) {
 			//there are other possibilities to explore
 		}
 	}
 
 	private static Class[] getInintArgTypes(Object[] initArgs) {
 		Class[] types = new Class[initArgs.length];
-		for(int i = 0; i < initArgs.length; i++) {
+		for (int i = 0; i < initArgs.length; i++) {
 			types[i] = initArgs[i] != null ? initArgs[i].getClass() : null;
 		}
 		return types;
@@ -79,7 +101,8 @@ public class MethodInvoker {
 		Object[] alternativeInitArgs = Converter.convertToMatchingTypes(inputTypes, initArgs);
 		try {
 			return method.invoke(impl, alternativeInitArgs);
-		} catch (IllegalAccessException privateOrProtectedInvoked) {
+		}
+		catch (IllegalAccessException privateOrProtectedInvoked) {
 			//should be impossible since Class.getMethods returns only public methods
 			throw new RuntimeException("somehow illegal (private or protected) method '" + method.getName() + "' invoked", privateOrProtectedInvoked);
 		}

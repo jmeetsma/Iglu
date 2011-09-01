@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration;
 
 import org.ijsberg.iglu.Cluster;
@@ -19,7 +39,7 @@ import static org.junit.Assert.assertFalse;
 /**
  *
  */
-public class FrameworkTest{
+public class FrameworkTest {
 
 	@Test
 	public void testEmbedding() throws Exception {
@@ -27,7 +47,7 @@ public class FrameworkTest{
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
 		Module shopModule = new StandardModule(drugstore);
 
-		Shop shop = (Shop)shopModule.getProxy(Shop.class);
+		Shop shop = (Shop) shopModule.getProxy(Shop.class);
 
 		Class[] implementedInterfaces = shopModule.getInterfaces();
 
@@ -48,7 +68,6 @@ public class FrameworkTest{
 		assertEquals(3, productInquiryCounter.getNrofInquiries());
 
 
-
 	}
 
 	@Test
@@ -64,7 +83,7 @@ public class FrameworkTest{
 		Map<String, Module> modules = cluster.getInternalModules();
 		assertEquals(1, modules.size());
 
-		Shop shop = (Shop)cluster.getInternalModules().get("Drugstore").getProxy(Shop.class);
+		Shop shop = (Shop) cluster.getInternalModules().get("Drugstore").getProxy(Shop.class);
 		assertNotNull(shop);
 
 		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
@@ -73,8 +92,6 @@ public class FrameworkTest{
 		assertFalse(drugstore.hasPhotoPrintService());
 		cluster.connect("PhotoPrintService", photoPrintServiceModule);
 		assertTrue(drugstore.hasPhotoPrintService());
-
-
 
 
 		//
@@ -104,9 +121,11 @@ public class FrameworkTest{
 		try {
 			serviceLayer.getProxy("PhotoPrintService", PhotoPrintService.class);
 			fail("ConfigurationException expected");
-		} catch(ConfigurationException expected){}
+		}
+		catch (ConfigurationException expected) {
+		}
 
-		Shop shop = (Shop)serviceLayer.getProxy("Drugstore", Shop.class);
+		Shop shop = (Shop) serviceLayer.getProxy("Drugstore", Shop.class);
 		assertNotNull(shop);
 
 		BasketImpl basket = new BasketImpl();

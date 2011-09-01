@@ -4,7 +4,7 @@
   <groupId>org.ijsberg.iglu</groupId>
   <artifactId>iglu</artifactId>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>0.99</version>
   <name>Iglu</name>
   <url>http://iglu.ijsberg.org</url>
   <dependencies>

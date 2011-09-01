@@ -1,10 +1,21 @@
-/* =======================================================================
- * Copyright (c) 2003-2010 IJsberg Automatisering BV. All rights reserved.
- * Redistribution and use of this code are permitted provided that the
- * conditions of the Iglu License are met.
- * The license can be found in org.ijsberg.iglu.StandardApplication.java
- * and is also published on http://iglu.ijsberg.org/LICENSE.
- * =======================================================================
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.ijsberg.iglu.configuration.util;
 
@@ -83,7 +94,7 @@ public abstract class StringSupport {
 	 * @param haystack  input string
 	 * @param needle	string to replace
 	 * @param newNeedle replacement
-	 * @see StringSupport#replaceAll(StringBuffer,String,String) use StringBuffer input
+	 * @see StringSupport#replaceAll(StringBuffer, String, String) use StringBuffer input
 	 *      to do a series of invocations in a row with minimal performance impact
 	 */
 	public static String replaceAll(String haystack, String needle, String newNeedle) {
@@ -159,7 +170,8 @@ public abstract class StringSupport {
 				nextIdx = haystack.indexOf(needle, idx + newNeedleLength);
 				processedChunkSize = nextIdx - idx;//length of replacement is not included
 				idx = nextIdx;
-			} else {
+			}
+			else {
 				nextIdx = haystack.indexOf(needle, idx + newNeedleLength);
 				processedChunkSize += nextIdx - idx;
 				idx = nextIdx;
@@ -212,7 +224,8 @@ public abstract class StringSupport {
 //					nrRemoved++;
 				}
 				prevIsWhiteSpace = true;
-			} else {
+			}
+			else {
 				prevIsWhiteSpace = false;
 			}
 		}
@@ -440,7 +453,8 @@ public abstract class StringSupport {
 		BufferedReader br = null;
 		if (encoding == null) {
 			br = new BufferedReader(new InputStreamReader(input));
-		} else {
+		}
+		else {
 			br = new BufferedReader(new InputStreamReader(input, encoding));
 		}
 
@@ -477,7 +491,8 @@ public abstract class StringSupport {
 		PrintStream writer;
 		if (encoding != null) {
 			writer = new PrintStream(output, true, encoding);
-		} else {
+		}
+		else {
 			writer = new PrintStream(output, true);
 		}
 		String line;
@@ -552,6 +567,7 @@ public abstract class StringSupport {
 
 	//TODO get rid of flags (move to spec)
 	//TODO distinguish delimiters and bracketdelimiters
+
 	/**
 	 * reads all words in a text
 	 *
@@ -591,19 +607,23 @@ public abstract class StringSupport {
 					}
 					storage.put(foundWord, new Object());
 					readingWord = false;
-				} else {
+				}
+				else {
 					if (quoteSymbols != null && quoteSymbols.indexOf(input.charAt(i)) != -1) {
 						insideQuotes = !insideQuotes;
-					} else {
+					}
+					else {
 						word.append(input.charAt(i));
 					}
 				}
-			} else {
+			}
+			else {
 				if (punctuationChars.indexOf(input.charAt(i)) == -1) {
 					word = new StringBuffer();
 					if (quoteSymbols != null && input.charAt(i) == '"') {
 						insideQuotes = !insideQuotes;
-					} else {
+					}
+					else {
 						word.append(input.charAt(i));
 					}
 					readingWord = true;
@@ -624,7 +644,8 @@ public abstract class StringSupport {
 		}
 		if (sort) {
 			return new ArrayList(storage.keySet());
-		} else {
+		}
+		else {
 			return unsortedStorage;
 		}
 	}
@@ -665,14 +686,17 @@ public abstract class StringSupport {
 					storage.put(foundWord, new Object());
 					readingWord = false;
 					continue LOOP;
-				} else {
+				}
+				else {
 					word.append(input.charAt(i));
 				}
-			} else {
+			}
+			else {
 				if (input.charAt(i) == startTag) {
 					word = new StringBuffer();
 					readingWord = true;
-				} else {
+				}
+				else {
 					continue LOOP;
 				}
 			}
@@ -688,7 +712,8 @@ public abstract class StringSupport {
 		}
 		if (sort) {
 			return storage.keySet();
-		} else {
+		}
+		else {
 			return unsortedStorage;
 		}
 	}
@@ -799,6 +824,7 @@ public abstract class StringSupport {
 		 return retval;
 	 }
  */
+
 	/**
 	 * Creates a character array and initializes it with a default value.
 	 *
@@ -813,7 +839,8 @@ public abstract class StringSupport {
 				for (int i = 0; i < size; i++) {
 					retval[i] = defaultVal;
 				}
-			} else {
+			}
+			else {
 				initializelLargeCharArray(retval, defaultVal);
 			}
 		}

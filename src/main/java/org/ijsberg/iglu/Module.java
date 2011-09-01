@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu;
 
 import java.lang.reflect.InvocationHandler;
@@ -8,7 +28,6 @@ import java.util.Set;
  * Modules are elementary building blocks of an application's structure.
  * An object that represents a structural part (component) of an application may be embedded in a module.
  * A module facilitates setting of properties as well as references to other components.
- *
  */
 public interface Module {
 
@@ -41,8 +60,8 @@ public interface Module {
 	 * The module may actually have references for every exposed interface.
 	 * This method must also be used to update references in case the exposure of interfaces changes.
 	 *
-	 * @param layer layer that must expose a module with id moduleId and given interfaces
-	 * @param moduleId ID of module
+	 * @param layer	  layer that must expose a module with id moduleId and given interfaces
+	 * @param moduleId   ID of module
 	 * @param interfaces the interfaces the module exposes
 	 */
 	void setReference(Layer layer, String moduleId, Class<?>... interfaces);
@@ -71,7 +90,6 @@ public interface Module {
 	void unregister(Module module);
 
 	/**
-	 *
 	 * @param moduleId
 	 * @return a set of classes of interfaces that have been injected by setter
 	 */

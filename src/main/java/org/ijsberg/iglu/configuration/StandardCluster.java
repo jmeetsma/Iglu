@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration;
 
 import org.ijsberg.iglu.Cluster;
@@ -72,7 +92,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @param module
 	 * @param exposedInterfaces
@@ -101,7 +120,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param module
 	 */
 	public void disconnect(Module module) {
@@ -116,14 +134,14 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 				removeDependenciesForInternalModule(moduleId, module);
 				internalModulesById.remove(moduleId);
 			}
-		} else if (isConnectedExternally(module)) {
+		}
+		else if (isConnectedExternally(module)) {
 			removeDependenciesForExternalModule(module);
 			externalModules.remove(module);
 		}
 	}
 
 	/**
-	 *
 	 * @param newExposedModuleId
 	 * @param newExposedModule
 	 */
@@ -132,7 +150,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param exposedModuleId
 	 * @param exposedInterfaces
 	 */
@@ -143,7 +160,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param newExposedModuleId
 	 * @param newExposedModule
 	 */
@@ -154,7 +170,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param exposedModuleId
 	 * @param exposedModule
 	 */
@@ -165,7 +180,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param exposedModuleId
 	 * @param exposedModule
 	 */
@@ -176,7 +190,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @param module
 	 */
@@ -193,7 +206,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @param module
 	 */
@@ -210,7 +222,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param externalModule
 	 */
 	private void setInterfacesForNewExternalModule(Module externalModule) {
@@ -222,7 +233,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param externalModule
 	 */
 	private void registerNewExternalModule(Module externalModule) {
@@ -233,7 +243,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param externalModule
 	 */
 	private void removeDependenciesForExternalModule(Module externalModule) {
@@ -256,7 +265,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param module
 	 * @param requestedInterfaces
 	 */
@@ -270,7 +278,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @return
 	 */
 	public Set<String> getExposedModuleIds() {
@@ -278,7 +285,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @return
 	 */
@@ -290,7 +296,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @param exposedInterface
 	 * @return
@@ -302,7 +307,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 * @return
 	 */
@@ -311,7 +315,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param module
 	 * @return
 	 */
@@ -364,7 +367,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @return
 	 */
 	public Layer asLayer() {
@@ -372,7 +374,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @return
 	 */
 	public Map<String, Module> getInternalModules() {
@@ -380,7 +381,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @return
 	 */
 	public Set<Module> getExternalModules() {
@@ -388,7 +388,6 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param internalModuleId
 	 * @param interfaces
 	 */

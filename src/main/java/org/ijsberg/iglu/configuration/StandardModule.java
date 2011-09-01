@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration;
 
 import org.ijsberg.iglu.ConfigurationException;
@@ -45,14 +65,14 @@ public class StandardModule implements Module, InvocationHandler {
 
 		if (injectedProxyTypesByModuleId.containsKey(moduleId)) {
 			resetReference(layer, moduleId, interfaces);
-		} else {
+		}
+		else {
 			Set<Class<?>> injectedProxyTypes = injectProxies(moduleId, Arrays.asList(interfaces), layer);
 			injectedProxyTypesByModuleId.put(moduleId, injectedProxyTypes);
 		}
 	}
 
 	/**
-	 *
 	 * @param layer
 	 * @param moduleId
 	 * @param interfaces
@@ -79,7 +99,6 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param moduleId
 	 */
 	public void removeDependency(String moduleId) {
@@ -88,7 +107,6 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 	/**
-	 *
 	 * @param module
 	 */
 	public void register(Module module) {
@@ -98,7 +116,8 @@ public class StandardModule implements Module, InvocationHandler {
 				Object listenerProxy = module.getProxy(interfaceClass);
 				invokeMethod(method, listenerProxy);
 				saveRegisteredListenerProxy(module, interfaceClass, listenerProxy);
-			} catch (NoSuchMethodException ignore) {
+			}
+			catch (NoSuchMethodException ignore) {
 			}
 		}
 	}
@@ -115,7 +134,8 @@ public class StandardModule implements Module, InvocationHandler {
 						invokeMethod(method, listenerProxy);
 						registeredListeners.remove(interfaceClass);
 					}
-				} catch (NoSuchMethodException ignore) {
+				}
+				catch (NoSuchMethodException ignore) {
 				}
 			}
 		}
@@ -157,7 +177,6 @@ public class StandardModule implements Module, InvocationHandler {
 			}
 		}
 	}
-
 
 
 	public Object getProxy(Class<?> interfaceClass) {
@@ -270,7 +289,8 @@ public class StandardModule implements Module, InvocationHandler {
 		}
 		if (handler != null) {
 			return handler.invoke(implementation, method, parameters);
-		} else return method.invoke(implementation, parameters);
+		}
+		else return method.invoke(implementation, parameters);
 	}
 
 

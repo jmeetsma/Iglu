@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.configuration.util;
 
 import java.util.Arrays;
@@ -32,7 +52,8 @@ public abstract class Converter {
 		}
 		if (input instanceof Number) {
 			return new Long(((Number) input).longValue());
-		} else if (input instanceof String) {
+		}
+		else if (input instanceof String) {
 			return new Long((String) input);
 		}
 		return new Long(input.toString());
@@ -48,7 +69,8 @@ public abstract class Converter {
 		}
 		if (input instanceof Number) {
 			return new Short(((Number) input).shortValue());
-		} else if (input instanceof String) {
+		}
+		else if (input instanceof String) {
 			return new Short((String) input);
 		}
 		return new Short(input.toString());
@@ -64,7 +86,8 @@ public abstract class Converter {
 		}
 		if (input instanceof Number) {
 			return new Byte(((Number) input).byteValue());
-		} else if (input instanceof String) {
+		}
+		else if (input instanceof String) {
 			return new Byte((String) input);
 		}
 		return new Byte(input.toString());
@@ -130,21 +153,22 @@ public abstract class Converter {
 		if (input instanceof String) {
 			if (((String) input).length() == 1) {
 				input = new Character(((String) input).charAt(0));
-			} else {
+			}
+			else {
 				return Boolean.valueOf((String) input);
 			}
 		}
 		if (input instanceof Character) {
 			switch (((Character) input).charValue()) {
-				case'N':
+				case 'N':
 					return Boolean.FALSE;
-				case'n':
+				case 'n':
 					return Boolean.FALSE;
-				case'f':
+				case 'f':
 					return Boolean.FALSE;
-				case'F':
+				case 'F':
 					return Boolean.FALSE;
-				case'0':
+				case '0':
 					return Boolean.FALSE;
 			}
 			return Boolean.TRUE;
@@ -219,7 +243,8 @@ public abstract class Converter {
 		if (source instanceof String && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
 			try {
 				return ReflectionSupport.instantiateClass(type, new Object[]{source});
-			} catch (InstantiationException e) {
+			}
+			catch (InstantiationException e) {
 				throw new IllegalArgumentException("can not convert '" + source + "' to type " + type + " with message: " + e.getMessage());
 			}
 		}
@@ -233,7 +258,7 @@ public abstract class Converter {
 	 * Tries to convert the objects in the array into the types specified.
 	 * This is typically necessary if a method is invoked command-line by reflection.
 	 *
-	 * @param targetInputTypes	 needed input types
+	 * @param targetInputTypes needed input types
 	 * @param args
 	 * @return the converted objects
 	 * @throws IllegalArgumentException in case conversion is not possible
@@ -244,7 +269,8 @@ public abstract class Converter {
 			for (int j = 0; j < args.length; j++) {
 				if (args[j] == null || targetInputTypes[j] == args[j].getClass()) {
 					alternativeArgs[j] = args[j];
-				} else {
+				}
+				else {
 					alternativeArgs[j] = convertToObject(args[j], targetInputTypes[j]);
 				}
 			}
