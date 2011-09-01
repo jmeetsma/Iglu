@@ -1,0 +1,1 @@
+Iglu Configuration is an atomic framework, written in Java. It's dedicated to the configuration of an application in terms of modules, layers and their relations. It aims to help developers organize high-level separation of concerns.
