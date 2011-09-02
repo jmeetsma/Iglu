@@ -6,6 +6,11 @@
   <packaging>jar</packaging>
   <version>0.99</version>
   <name>Iglu</name>
+  <description>
+    Iglu is an atomic framework, written in Java. It's a reference implementation for research focused
+    on the configuration of an application in terms of modules, clusters, layers and their relations.
+    It helps developers organize high-level separation of concerns and adhere to application design.
+  </description>
   <url>http://iglu.ijsberg.org</url>
   <dependencies>
     <dependency>
@@ -21,4 +26,21 @@
         <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
         </license>
     </licenses>
+    <scm>
+      <connection>
+         scm:git:git://github.com/jmeetsma/Iglu.git
+      </connection>
+      <developerConnection>
+         scm:git:ssh://git@github.com/jmeetsma/Iglu.git
+      </developerConnection>
+      <url>
+         https://github.com/jmeetsma/Iglu
+      </url>
+    </scm>
+    <developers>
+        <developer>
+            <name>Jeroen Meetsma</name>
+            <email>info@ijsberg.nl</email>
+        </developer>
+    </developers>
 </project>
