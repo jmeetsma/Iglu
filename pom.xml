@@ -9,7 +9,7 @@
     <groupId>org.ijsberg.iglu</groupId>
     <artifactId>iglu</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Iglu</name>
     <description>
         Iglu is an atomic framework, written in Java. It's a reference implementation for research focused
