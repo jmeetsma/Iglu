@@ -24,7 +24,7 @@ import org.ijsberg.iglu.Cluster;
 import org.ijsberg.iglu.ConfigurationException;
 import org.ijsberg.iglu.Layer;
 import org.ijsberg.iglu.Module;
-import org.ijsberg.iglu.configuration.sample.shop.*;
+import org.ijsberg.iglu.sample.configuration.shop.*;
 import org.junit.Test;
 
 import java.util.Map;

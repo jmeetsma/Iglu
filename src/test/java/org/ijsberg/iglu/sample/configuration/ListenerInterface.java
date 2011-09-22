@@ -18,34 +18,14 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.sample.configuration;
 
-/**
- * This exception is thrown if the configuration as envisioned,
- * comprised of module properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
- */
-public class ConfigurationException extends RuntimeException {
+public interface ListenerInterface {
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
-		super(message);
-	}
+	public abstract String getLastMessage();
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
-	}
+	public abstract void notify(String message);
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+	public abstract String getId();
+
 }

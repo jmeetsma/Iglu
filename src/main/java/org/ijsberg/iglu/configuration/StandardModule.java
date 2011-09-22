@@ -23,9 +23,8 @@ package org.ijsberg.iglu.configuration;
 import org.ijsberg.iglu.ConfigurationException;
 import org.ijsberg.iglu.Layer;
 import org.ijsberg.iglu.Module;
-import org.ijsberg.iglu.configuration.util.Converter;
-import org.ijsberg.iglu.configuration.util.ReflectionSupport;
-import org.ijsberg.iglu.configuration.util.StringSupport;
+import org.ijsberg.iglu.util.types.Converter;
+import org.ijsberg.iglu.util.reflection.ReflectionSupport;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -222,9 +221,16 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 	private List<Method> getModuleSettersByPropertyKey(String key) {
-		String setterName = "set" + StringSupport.makeFirstCharUpperCase(key);
+		String setterName = "set" + makeFirstCharUpperCase(key);
 		return getMethodsByName(implementation.getClass(), setterName);
 	}
+
+	public static String makeFirstCharUpperCase(String varName) {
+		StringBuffer keyStrBuf = new StringBuffer(varName);
+		keyStrBuf.replace(0, 1, (String.valueOf(keyStrBuf.charAt(0))).toUpperCase());
+		return keyStrBuf.toString();
+	}
+
 
 	private static List<Method> getMethodsByName(Class clasz, String methodName) {
 		List<Method> retval = new ArrayList<Method>();

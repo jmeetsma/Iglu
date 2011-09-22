@@ -18,34 +18,29 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.sample.configuration;
 
-/**
- * This exception is thrown if the configuration as envisioned,
- * comprised of module properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
- */
-public class ConfigurationException extends RuntimeException {
+import java.io.Serializable;
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
-		super(message);
+public class Banana implements BananaInterface, Serializable {
+
+	private int returnValue;
+	private AppleInterface sampleInterface1;
+
+	public Banana(int returnValue) {
+		this.returnValue = returnValue;
 	}
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
+	public int returnAnInt() {
+		return returnValue;
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
+	public String getMessageFromApple() {
+		return sampleInterface1.getMessage();
 	}
+
+	public void setApple(AppleInterface sampleInterface) {
+		this.sampleInterface1 = sampleInterface;
+	}
+
 }

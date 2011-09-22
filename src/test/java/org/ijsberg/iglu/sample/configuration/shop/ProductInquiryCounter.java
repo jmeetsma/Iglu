@@ -18,34 +18,25 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.sample.configuration.shop;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 /**
- * This exception is thrown if the configuration as envisioned,
- * comprised of module properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
  */
-public class ConfigurationException extends RuntimeException {
+public class ProductInquiryCounter implements InvocationHandler {
+	int countedInquiries;
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
-		super(message);
+	public Object invoke(Object proxy, Method method, Object[] parameters)
+			throws Throwable {
+		if (method.getName().startsWith("findProduct")) {
+			countedInquiries++;
+		}
+		return method.invoke(proxy, parameters);
 	}
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
+	public int getNrofInquiries() {
+		return countedInquiries;
 	}
 }

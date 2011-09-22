@@ -18,34 +18,31 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.sample.configuration;
 
-/**
- * This exception is thrown if the configuration as envisioned,
- * comprised of module properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
- */
-public class ConfigurationException extends RuntimeException {
+import java.util.Properties;
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
-		super(message);
+public class Peach implements PeachInterface {
+
+	String color;
+
+	public void setProperties(Properties properties) {
+		color = properties.getProperty("color", "green");
 	}
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
+	public String getColor() {
+		return color;
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
+	public Integer setTaste(int taste) {
+		return taste;
+	}
+
+	public String setTaste(String taste) {
+		return taste;
+	}
+
+	public String setTaste(String taste, int factor) {
+		return taste + factor;
 	}
 }

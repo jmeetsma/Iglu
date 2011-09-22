@@ -18,34 +18,23 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.sample.configuration.shop;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * This exception is thrown if the configuration as envisioned,
- * comprised of module properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
  */
-public class ConfigurationException extends RuntimeException {
+public class CustomerSurvey {
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
-		super(message);
+	Set registeredBaskets = new HashSet();
+
+	public void register(Basket basket) {
+		registeredBaskets.add(basket);
 	}
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
+	public int getNrofRegisteredBaskets() {
+		return registeredBaskets.size();
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }
