@@ -23,11 +23,11 @@ package org.ijsberg.iglu.sample.configuration;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class GetMessageIntercepter implements InvocationHandler {
+public class GetMessageInterceptor implements InvocationHandler {
 
 	private String suffix;
 
-	public GetMessageIntercepter(String suffix) {
+	public GetMessageInterceptor(String suffix) {
 		this.suffix = suffix;
 	}
 

@@ -26,6 +26,7 @@ public interface AppleInterface {
 
 	public Object returnInput(Object input);
 
-	public abstract int getSomeInt();
+	public int getSomeInt();
 
+	public String returnInput(boolean arg1, char arg2, int arg3);
 }

@@ -226,22 +226,22 @@ public class ConverterTest {
 
 	@Test
 	public void convertToMatchingTypesTest() throws Exception {
-		Object[] objects = Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[]{"10"});
+		Object[] objects = Converter.convertToMatchingTypes(new String[]{"10"}, new Class[]{Integer.class});
 		assertEquals(10, objects[0]);
 		try {
-			Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[0]);
+			Converter.convertToMatchingTypes(new String[0], new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
 		}
 		catch (IllegalArgumentException expected) {
 		}
 		try {
-			Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[]{"word"});
+			Converter.convertToMatchingTypes(new String[]{"word"}, new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
 		}
 		catch (IllegalArgumentException expected) {
 		}
 
-		objects = Converter.convertToMatchingTypes(new Class[0], new String[0]);
+		objects = Converter.convertToMatchingTypes(new String[0], new Class[0]);
 		assertEquals(0, objects.length);
 	}
 }

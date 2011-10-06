@@ -61,6 +61,11 @@ public class Apple implements AppleInterface {
 		return someInt;
 	}
 
+	@Override
+	public String returnInput(boolean arg1, char arg2, int arg3) {
+		return "" + arg1 + arg2 + arg3;
+	}
+
 	protected void touchCore() {
 	}
 
