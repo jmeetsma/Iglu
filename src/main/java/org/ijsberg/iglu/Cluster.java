@@ -41,7 +41,7 @@ import java.util.Set;
 public interface Cluster {
 
 	/**
-	 * @return a map of connected internal modules, keyed by modulke ID
+	 * @return a map of connected internal modules, keyed by module ID
 	 */
 	Map<String, Module> getInternalModules();
 
