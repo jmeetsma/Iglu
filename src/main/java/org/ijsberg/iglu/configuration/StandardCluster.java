@@ -57,6 +57,7 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 		return exposedInterfacesByModuleId.containsKey(moduleId);
 	}
 
+	//TODO connect method that takes Object as argument and returns StandardModule
 
 	/**
 	 * Connects a module as internal module
