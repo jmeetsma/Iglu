@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.configuration;
@@ -23,6 +23,7 @@ package org.ijsberg.iglu.configuration;
 import org.ijsberg.iglu.ConfigurationException;
 import org.ijsberg.iglu.Layer;
 import org.ijsberg.iglu.Module;
+import org.ijsberg.iglu.util.reflection.MethodInvocation;
 import org.ijsberg.iglu.util.types.Converter;
 import org.ijsberg.iglu.util.reflection.ReflectionSupport;
 
@@ -42,6 +43,7 @@ public class StandardModule implements Module, InvocationHandler {
 	public static final String UNREGISTER_LISTENER_METHOD_NAME = "unregister";
 
 	private Object implementation;
+	private Class<?>[] interfaces;
 	private Properties properties;
 	private Properties setterInjectedProperties = new Properties();
 
@@ -55,6 +57,7 @@ public class StandardModule implements Module, InvocationHandler {
 			throw new NullPointerException("implementation can not be null");
 		}
 		this.implementation = implementation;
+		this.interfaces = ReflectionSupport.getInterfacesForClass(implementation.getClass()).toArray(new Class<?>[0]);
 	}
 
 	/**
@@ -195,7 +198,7 @@ public class StandardModule implements Module, InvocationHandler {
 
 
 	public Class<?>[] getInterfaces() {
-		return ReflectionSupport.getInterfacesForClass(implementation.getClass()).toArray(new Class<?>[0]);
+		return interfaces;
 	}
 
 	public void setProperties(Properties properties) {
@@ -220,9 +223,9 @@ public class StandardModule implements Module, InvocationHandler {
 		return setterInjectedProperties;
 	}
 
-	private List<Method> getModuleSettersByPropertyKey(String key) {
+	private Set<Method> getModuleSettersByPropertyKey(String key) {
 		String setterName = "set" + makeFirstCharUpperCase(key);
-		return getMethodsByName(implementation.getClass(), setterName);
+		return ReflectionSupport.getMethodsByName(implementation.getClass(), setterName, 1);
 	}
 
 	public static String makeFirstCharUpperCase(String varName) {
@@ -232,33 +235,20 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 
-	private static List<Method> getMethodsByName(Class clasz, String methodName) {
-		List<Method> retval = new ArrayList<Method>();
-		Method[] methods = clasz.getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (methodName.equals(method.getName()) && method.getParameterTypes().length == 1) {
-				retval.add(method);
-			}
-		}
-		return retval;
-	}
-
 	private void injectPropertyIfMatchingSetterFound(String key, Object value) {
-		List<Method> setters = getModuleSettersByPropertyKey(key);
+		Set<Method> setters = getModuleSettersByPropertyKey(key);
 		if (setters.size() > 1) {
 			throw new ConfigurationException("more than 1 (" + setters.size() +
 					") setter found for property '" + key + "'");
 		}
 		if (setters.size() == 1) {
-			injectProperty(value, setters.get(0));
+			injectProperty(setters.iterator().next(), value);
 			setterInjectedProperties.put(key, value);
 		}
 	}
 
-	private void injectProperty(Object value, Method method) {
+	private void injectProperty(Method method, Object value) {
 		Object injectingObject = Converter.convertToObject(value, method.getParameterTypes()[0]);
-
 		invokeMethod(method, injectingObject);
 	}
 
@@ -284,7 +274,6 @@ public class StandardModule implements Module, InvocationHandler {
 		invocationHandlers.put(interfaceClass, handler);
 	}
 
-
 	public Object invoke(Object proxy, Method method, Object[] parameters)
 			throws Throwable {
 		//get handler for specific proxy interface
@@ -299,6 +288,19 @@ public class StandardModule implements Module, InvocationHandler {
 		else return method.invoke(implementation, parameters);
 	}
 
+	public Object invoke(String methodName, Object... parameters) throws InvocationTargetException, NoSuchMethodException, IllegalArgumentException {
+		MethodInvocation invocation = new MethodInvocation(this, implementation, methodName,
+				getInterfaceMethodsByName(methodName, parameters.length).toArray(new Method[0]), parameters);
+		return invocation.invoke();
+	}
+
+	private Set<Method> getInterfaceMethodsByName(String methodName, int nrofParameters) {
+		Set<Method> retval = new HashSet<Method>();
+		for(Class clasz : interfaces) {
+			retval.addAll(ReflectionSupport.getMethodsByName(clasz, methodName, nrofParameters));
+		}
+		return retval;
+	}
 
 	public Set<Class<?>> getInjectedInterfaces(String moduleId) {
 		Set<Class<?>> retval = new HashSet<Class<?>>();

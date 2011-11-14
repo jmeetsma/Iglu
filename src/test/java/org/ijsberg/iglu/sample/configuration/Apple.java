@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.sample.configuration;
@@ -59,6 +59,11 @@ public class Apple implements AppleInterface {
 
 	public int getSomeInt() {
 		return someInt;
+	}
+
+	@Override
+	public String returnInput(boolean arg1, char arg2, int arg3) {
+		return "" + arg1 + arg2 + arg3;
 	}
 
 	protected void touchCore() {

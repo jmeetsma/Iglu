@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.configuration;
@@ -57,6 +57,7 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 		return exposedInterfacesByModuleId.containsKey(moduleId);
 	}
 
+	//TODO connect method that takes Object as argument and returns StandardModule
 
 	/**
 	 * Connects a module as internal module

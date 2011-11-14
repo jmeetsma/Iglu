@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.ijsberg.iglu.util.reflection;
 
@@ -23,8 +23,11 @@ import org.ijsberg.iglu.util.types.Converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -169,7 +172,7 @@ public class ReflectionSupport {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
 				Class[] inputTypes = constructors[i].getParameterTypes();
 				if(inputTypes.length == initArgs.length) {
-					Object[] alternativeInitArgs = Converter.convertToMatchingTypes(inputTypes, initArgs);
+					Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 					if (alternativeInitArgs != null) {
 						return instantiateClass(clasz, constructors[i], alternativeInitArgs);
 					}
@@ -215,6 +218,22 @@ public class ReflectionSupport {
 		}
 	}
 
-
-
+	/**
+	 *
+	 * @param clasz
+	 * @param methodName
+	 * @param requiredNrofParameters
+	 * @return a set of methods with the given name and number of parameters
+	 */
+	public static Set<Method> getMethodsByName(Class clasz, String methodName, int requiredNrofParameters) {
+		Set<Method> retval = new HashSet<Method>();
+		Method[] methods = clasz.getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			if (methodName.equals(method.getName()) && method.getParameterTypes().length == requiredNrofParameters) {
+				retval.add(method);
+			}
+		}
+		return retval;
+	}
 }

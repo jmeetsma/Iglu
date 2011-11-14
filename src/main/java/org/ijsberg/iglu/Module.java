@@ -15,12 +15,13 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -103,4 +104,15 @@ public interface Module {
 	 * @param interceptor
 	 */
 	void setInvocationInterceptor(Class<?> interfaceClass, InvocationHandler interceptor);
+
+	/**
+	 *
+	 * @param methodName name of a method declared by a module's interface
+	 * @param parameters
+	 * @return
+	 * @throws InvocationTargetException in case the invoked method throws
+	 * @throws NoSuchMethodException in case no suitable method is found
+	 * @throws IllegalArgumentException in case the arguments can not be converted
+	 */
+	Object invoke(String methodName, Object... parameters) throws InvocationTargetException, NoSuchMethodException, IllegalArgumentException;
 }

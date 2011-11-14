@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu;
@@ -41,7 +41,7 @@ import java.util.Set;
 public interface Cluster {
 
 	/**
-	 * @return a map of connected internal modules, keyed by modulke ID
+	 * @return a map of connected internal modules, keyed by module ID
 	 */
 	Map<String, Module> getInternalModules();
 

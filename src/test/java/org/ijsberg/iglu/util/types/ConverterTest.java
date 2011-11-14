@@ -1,3 +1,23 @@
+/*
+ * Copyright 2011 Jeroen Meetsma
+ *
+ *
+ * This file is part of Iglu.
+ *
+ * Iglu is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Iglu is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.ijsberg.iglu.util.types;
 
 import org.junit.Test;
@@ -206,22 +226,22 @@ public class ConverterTest {
 
 	@Test
 	public void convertToMatchingTypesTest() throws Exception {
-		Object[] objects = Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[]{"10"});
+		Object[] objects = Converter.convertToMatchingTypes(new String[]{"10"}, new Class[]{Integer.class});
 		assertEquals(10, objects[0]);
 		try {
-			Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[0]);
+			Converter.convertToMatchingTypes(new String[0], new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
 		}
 		catch (IllegalArgumentException expected) {
 		}
 		try {
-			Converter.convertToMatchingTypes(new Class[]{Integer.class}, new String[]{"word"});
+			Converter.convertToMatchingTypes(new String[]{"word"}, new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
 		}
 		catch (IllegalArgumentException expected) {
 		}
 
-		objects = Converter.convertToMatchingTypes(new Class[0], new String[0]);
+		objects = Converter.convertToMatchingTypes(new String[0], new Class[0]);
 		assertEquals(0, objects.length);
 	}
 }

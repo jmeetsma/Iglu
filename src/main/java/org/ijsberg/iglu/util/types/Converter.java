@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.util.types;
@@ -158,7 +158,7 @@ public abstract class Converter {
 		return new Character('\0');
 	}
 
-	protected static Object convertToPrimitive(Class type, Object source) {
+	protected static Object convertToPrimitive(Object source, Class type) {
 		if ("byte".equals(type.getName())) {
 			return convertToByte(source);
 		}
@@ -201,7 +201,7 @@ public abstract class Converter {
 			return source;
 		}
 		if (type.isPrimitive()) {
-			return convertToPrimitive(type, source);
+			return convertToPrimitive(source, type);
 		}
 		if (source instanceof String && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
 			try {
@@ -221,25 +221,26 @@ public abstract class Converter {
 	 * Tries to convert the objects in the array into the types specified.
 	 * This is typically useful if a method is invoked command-line by reflection.
 	 *
-	 * @param targetInputTypes needed input types
-	 * @param args
+	 *
+	 * @param objects
+	 * @param targetTypes needed input types
 	 * @return the converted objects
 	 * @throws IllegalArgumentException in case conversion is not possible
 	 */
-	public static Object[] convertToMatchingTypes(Class[] targetInputTypes, Object[] args) {
-		Object[] alternativeArgs = new Object[args.length];
-		if (targetInputTypes.length == args.length) {
-			for (int j = 0; j < args.length; j++) {
-				if (args[j] == null || targetInputTypes[j] == args[j].getClass()) {
-					alternativeArgs[j] = args[j];
+	public static Object[] convertToMatchingTypes(Object[] objects, Class[] targetTypes) {
+		Object[] alternativeObjects = new Object[objects.length];
+		if (targetTypes.length == objects.length) {
+			for (int j = 0; j < objects.length; j++) {
+				if (objects[j] == null || targetTypes[j] == objects[j].getClass()) {
+					alternativeObjects[j] = objects[j];
 				}
 				else {
-					alternativeArgs[j] = convertToObject(args[j], targetInputTypes[j]);
+					alternativeObjects[j] = convertToObject(objects[j], targetTypes[j]);
 				}
 			}
-			return alternativeArgs;
+			return alternativeObjects;
 		}
-		throw new IllegalArgumentException("arguments " + Arrays.asList(args) +
-				" can not be converted to types " + Arrays.asList(targetInputTypes));
+		throw new IllegalArgumentException("arguments " + Arrays.asList(objects) +
+				" can not be converted to types " + Arrays.asList(targetTypes));
 	}
 }

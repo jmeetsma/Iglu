@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.sample.configuration;
@@ -23,11 +23,11 @@ package org.ijsberg.iglu.sample.configuration;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class GetMessageIntercepter implements InvocationHandler {
+public class GetMessageInterceptor implements InvocationHandler {
 
 	private String suffix;
 
-	public GetMessageIntercepter(String suffix) {
+	public GetMessageInterceptor(String suffix) {
 		this.suffix = suffix;
 	}
 

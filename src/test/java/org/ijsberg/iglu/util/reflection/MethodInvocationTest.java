@@ -15,15 +15,19 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.util.reflection;
 
+import org.ijsberg.iglu.configuration.StandardModule;
 import org.ijsberg.iglu.sample.configuration.Apple;
+import org.ijsberg.iglu.sample.configuration.AppleInterface;
+import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +38,7 @@ import static org.junit.Assert.assertNull;
 public class MethodInvocationTest {
 
 	@Test
-	public void execute() throws Exception {
+	public void testInvokePlainObject() throws Exception {
 		Apple apple = new Apple();
 		MethodInvocation invocation = new MethodInvocation(apple, "setMessage", "hello");
 
@@ -52,15 +56,65 @@ public class MethodInvocationTest {
 		try {
 			invocation.invoke();
 			fail("InvocationTargetException expected");
-		} catch (InvocationTargetException expected) {}
+		} catch (InvocationTargetException expected) {
+			assertEquals(NullPointerException.class, expected.getTargetException().getClass());
+		}
 
-		invocation = new MethodInvocation(apple, "setMessage()");
+		invocation = new MethodInvocation(apple, "setMessage");
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");
 		} catch (NoSuchMethodException expected) {}
 
-		invocation = new MethodInvocation(apple, "absentMethod()");
+		invocation = new MethodInvocation(apple, "absentMethod");
+		try {
+			invocation.invoke();
+			fail("NoSuchMethodException expected");
+		} catch (NoSuchMethodException expected) {}
+	}
+
+	@Test
+	public void testInvokeInvocationHandler() throws Exception {
+		Apple apple = new Apple();
+		StandardModule appleModule = new StandardModule(apple);
+		MethodInvocation invocation = new MethodInvocation(appleModule, apple, "setMessage",
+				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 1).toArray(new Method[0]), "hello");
+
+		Object result = invocation.invoke();
+		assertNull(result);
+
+		assertEquals("hello", apple.getMessage());
+
+		invocation = new MethodInvocation(appleModule, apple, "getMessage",
+				ReflectionSupport.getMethodsByName(AppleInterface.class, "getMessage", 0).toArray(new Method[0]));
+		result = invocation.invoke();
+
+		assertEquals("hello", result);
+
+		appleModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor("Bingo"));
+		result = invocation.invoke();
+
+		assertEquals("helloBingo", result);
+
+		invocation = new MethodInvocation(appleModule, apple, "getIntFromBanana",
+				ReflectionSupport.getMethodsByName(Apple.class, "getIntFromBanana", 0).toArray(new Method[0]));
+		try {
+			invocation.invoke();
+			fail("InvocationTargetException expected");
+		} catch (InvocationTargetException expected) {
+			assertEquals(NullPointerException.class, expected.getTargetException().getClass());
+		}
+
+		invocation = new MethodInvocation(appleModule, apple, "setMessage",
+				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 1).toArray(new Method[0]));
+
+		try {
+			invocation.invoke();
+			fail("NoSuchMethodException expected");
+		} catch (NoSuchMethodException expected) {}
+
+		invocation = new MethodInvocation(appleModule, apple, "absentMessage",
+				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 0).toArray(new Method[0]));
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");

@@ -15,7 +15,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.configuration;
@@ -33,16 +33,8 @@ import java.util.Properties;
 import org.ijsberg.iglu.Cluster;
 import org.ijsberg.iglu.ConfigurationException;
 import org.ijsberg.iglu.Module;
-import org.ijsberg.iglu.sample.configuration.Apple;
-import org.ijsberg.iglu.sample.configuration.AppleInterface;
-import org.ijsberg.iglu.sample.configuration.Banana;
-import org.ijsberg.iglu.sample.configuration.BananaInterface;
-import org.ijsberg.iglu.sample.configuration.Elstar;
-import org.ijsberg.iglu.sample.configuration.ElstarInterface;
-import org.ijsberg.iglu.sample.configuration.GetMessageIntercepter;
-import org.ijsberg.iglu.sample.configuration.Listener;
-import org.ijsberg.iglu.sample.configuration.Notifier;
-import org.ijsberg.iglu.sample.configuration.Peach;
+import org.ijsberg.iglu.sample.configuration.*;
+import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -242,7 +234,7 @@ public class StandardModuleTest {
 		assertEquals("Hello", apple.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
-		appleModule.setInvocationInterceptor(AppleInterface.class, new GetMessageIntercepter(" world"));
+		appleModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
 		assertEquals("not intercepted", proxy.returnInput("not intercepted"));
@@ -261,10 +253,10 @@ public class StandardModuleTest {
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for ElstarInterface is affected, since AppleInterface is declaring class
-		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageIntercepter(" world"));
+		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
-		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageIntercepter(" baby"));
+		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" baby"));
 		assertEquals("Hello baby", proxy.getMessage());
 
 		AppleInterface proxy2 = (AppleInterface) elstarModule.getProxy(AppleInterface.class);
@@ -283,13 +275,13 @@ public class StandardModuleTest {
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for AppleInterface not affected
-		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageIntercepter(" world"));
+		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello", proxy.getMessage());
 
 //		elstarModule.setInvocationHandler(ElstarInterface.class, new GetMessageIntercepter(" world"));
 		assertEquals("Hello world", ((ElstarInterface) elstarModule.getProxy(ElstarInterface.class)).getMessage());
 
-		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageIntercepter(" world"));
+		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 	}
 
@@ -467,5 +459,39 @@ public class StandardModuleTest {
 		notifierModule.unregister(listenerModule1);
 		//no need to throw
 	}
+
+	@Test
+	public void testInvoke() throws Exception {
+		try {
+			appleModule.invoke("setMessage", "test invoke");
+			fail("setMessage not specified in interface");
+		} catch (NoSuchMethodException setMessageNotSpecifiedInInterface) {};
+
+		Object result = appleModule.invoke("returnInput", "test invoke");
+		assertEquals("test invoke", result);
+
+		result = appleModule.invoke("returnInput", true, '-', 23);
+		assertEquals("true-23", result);
+
+		result = appleModule.invoke("returnInput", "false", "+", "12");
+		assertEquals("false+12", result);
+
+		result = appleModule.invoke("returnInput", 100);
+		assertEquals(100, result);
+
+		try {
+			result = appleModule.invoke("returnInput", "arg2", "arg2");
+			fail("NoSuchMethodException expected");
+		} catch (NoSuchMethodException expected) {};
+
+		try {
+			result = appleModule.invoke("returnInput", "true", "=", "twelve");
+			fail("NumberFormatException expected");
+		} catch (NumberFormatException expected) {};
+
+		result = appleModule.invoke("returnInput", 0, 65, "12");
+		assertEquals("falseA12", result);
+	}
+
 
 }
