@@ -21,9 +21,9 @@
 package org.ijsberg.iglu.configuration;
 
 import org.ijsberg.iglu.Cluster;
+import org.ijsberg.iglu.Component;
 import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Layer;
-import org.ijsberg.iglu.Module;
+import org.ijsberg.iglu.Facade;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -31,249 +31,249 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
 
-public class StandardCluster implements Cluster, Layer, InvocationHandler {
+public class StandardCluster implements Cluster, Facade, InvocationHandler {
 
-	private HashMap<String, Set<Class<?>>> exposedInterfacesByModuleId = new HashMap<String, Set<Class<?>>>();
-	private Set<Module> externalModules = new HashSet<Module>();
-	private HashMap<String, Module> internalModulesById = new HashMap<String, Module>();
+	private HashMap<String, Set<Class<?>>> exposedInterfacesByComponentId = new HashMap<String, Set<Class<?>>>();
+	private Set<Component> externalComponents = new HashSet<Component>();
+	private HashMap<String, Component> internalComponentsById = new HashMap<String, Component>();
 
 
 	//TODO constructor that takes name as argument
-	//to embed cluster as module within cluster (Layer exposed, Cluster hidden)
+	//to embed cluster as component within cluster (Facade exposed, Cluster hidden)
 
-	public boolean isConnected(Module module) {
-		return isConnectedInternally(module) || isConnectedExternally(module);
+	public boolean isConnected(Component component) {
+		return isConnectedInternally(component) || isConnectedExternally(component);
 	}
 
-	public boolean isConnectedInternally(Module module) {
-		return internalModulesById.values().contains(module);
+	public boolean isConnectedInternally(Component component) {
+		return internalComponentsById.values().contains(component);
 	}
 
-	public boolean isConnectedExternally(Module module) {
-		return externalModules.contains(module);
+	public boolean isConnectedExternally(Component component) {
+		return externalComponents.contains(component);
 	}
 
-	public boolean isExposed(String moduleId) {
-		return exposedInterfacesByModuleId.containsKey(moduleId);
+	public boolean isExposed(String componentId) {
+		return exposedInterfacesByComponentId.containsKey(componentId);
 	}
 
-	//TODO connect method that takes Object as argument and returns StandardModule
+	//TODO connect method that takes Object as argument and returns StandardComponent
 
 	/**
-	 * Connects a module as internal module
+	 * Connects a component as internal component
 	 *
-	 * @param moduleId
-	 * @param module
-	 * @throws ConfigurationException if the module is already registered
+	 * @param componentId
+	 * @param component
+	 * @throws ConfigurationException if the component is already registered
 	 */
-	public void connect(String moduleId, Module module) throws ConfigurationException {
-		if (isConnectedExternally(module)) {
-			throw new ConfigurationException("module " + module + " is already connected as external module");
+	public void connect(String componentId, Component component) throws ConfigurationException {
+		if (isConnectedExternally(component)) {
+			throw new ConfigurationException("component " + component + " is already connected as external component");
 		}
-		ensureIdNotRegisteredByOther(moduleId);
-		internalModulesById.put(moduleId, module);
-		setDependenciesForNewInternalModule(moduleId, module);
-		registerExternalModuleAsListener(moduleId, module);
+		ensureIdNotRegisteredByOther(componentId);
+		internalComponentsById.put(componentId, component);
+		setDependenciesForNewInternalComponent(componentId, component);
+		registerExternalComponentAsListener(componentId, component);
 	}
 
 	/**
-	 * Connects a module as internal, exposed module.
+	 * Connects a component as internal, exposed component.
 	 *
-	 * @param moduleId
-	 * @param module
-	 * @param exposedInterfaces interfaces accessible for external modules
-	 * @throws ConfigurationException if the module is already registered
+	 * @param componentId
+	 * @param component
+	 * @param exposedInterfaces interfaces accessible for external components
+	 * @throws ConfigurationException if the component is already registered
 	 */
-	public void connect(String moduleId, Module module, Class<?>... exposedInterfaces) throws ConfigurationException {
+	public void connect(String componentId, Component component, Class<?>... exposedInterfaces) throws ConfigurationException {
 
-		ensureModuleExposesInterfaces(module, Arrays.<Class<?>>asList(exposedInterfaces));
-		connect(moduleId, module);
-		setExposedInterfaces(moduleId, module, exposedInterfaces);
-		registerExternalModuleAsListener(moduleId, module);
+		ensureComponentExposesInterfaces(component, Arrays.<Class<?>>asList(exposedInterfaces));
+		connect(componentId, component);
+		setExposedInterfaces(componentId, component, exposedInterfaces);
+		registerExternalComponentAsListener(componentId, component);
 	}
 
 	/**
-	 * @param moduleId
-	 * @param module
+	 * @param componentId
+	 * @param component
 	 * @param exposedInterfaces
 	 */
-	private void setExposedInterfaces(String moduleId, Module module,
+	private void setExposedInterfaces(String componentId, Component component,
 									  Class<?>... exposedInterfaces) {
-		exposedInterfacesByModuleId.put(moduleId, new HashSet<Class<?>>(Arrays.asList(exposedInterfaces)));
-		setInterfacesInExternalModules(moduleId, module);
+		exposedInterfacesByComponentId.put(componentId, new HashSet<Class<?>>(Arrays.asList(exposedInterfaces)));
+		setInterfacesInExternalComponents(componentId, component);
 	}
 
 	/**
-	 * Connects module as external, anonymous module
+	 * Connects component as external, anonymous component
 	 *
-	 * @param externalModule
-	 * @throws ConfigurationException if the module is already registered
+	 * @param externalComponent
+	 * @throws ConfigurationException if the component is already registered
 	 */
-	public void connect(Module externalModule) throws ConfigurationException {
+	public void connect(Component externalComponent) throws ConfigurationException {
 
-		if (isConnected(externalModule)) {
-			throw new ConfigurationException("module " + externalModule + " is already connected");
+		if (isConnected(externalComponent)) {
+			throw new ConfigurationException("component " + externalComponent + " is already connected");
 		}
 
-		externalModules.add(externalModule);
-		setInterfacesForNewExternalModule(externalModule);
-		this.registerNewExternalModule(externalModule);
+		externalComponents.add(externalComponent);
+		setInterfacesForNewExternalComponent(externalComponent);
+		this.registerNewExternalComponent(externalComponent);
 	}
 
 	/**
-	 * @param module
+	 * @param component
 	 */
-	public void disconnect(Module module) {
-		if (isConnectedInternally(module)) {
-			Set<String> moduleIds = lookUpModuleIds(module);
-			for (String moduleId : moduleIds) {
-				if (isExposed(moduleId)) {
-					removeInterfacesForExternalModules(moduleId, module);
+	public void disconnect(Component component) {
+		if (isConnectedInternally(component)) {
+			Set<String> componentIds = lookUpComponentIds(component);
+			for (String componentId : componentIds) {
+				if (isExposed(componentId)) {
+					removeInterfacesForExternalComponents(componentId, component);
 				}
-				this.unregisterExternalListeners(moduleId, module);
-				exposedInterfacesByModuleId.remove(moduleId);
-				removeDependenciesForInternalModule(moduleId, module);
-				internalModulesById.remove(moduleId);
+				this.unregisterExternalListeners(componentId, component);
+				exposedInterfacesByComponentId.remove(componentId);
+				removeDependenciesForInternalComponent(componentId, component);
+				internalComponentsById.remove(componentId);
 			}
 		}
-		else if (isConnectedExternally(module)) {
-			removeDependenciesForExternalModule(module);
-			externalModules.remove(module);
+		else if (isConnectedExternally(component)) {
+			removeDependenciesForExternalComponent(component);
+			externalComponents.remove(component);
 		}
 	}
 
 	/**
-	 * @param newExposedModuleId
-	 * @param newExposedModule
+	 * @param newExposedComponentId
+	 * @param newExposedComponent
 	 */
-	private void setInterfacesInExternalModules(String newExposedModuleId, Module newExposedModule) {
-		setInterfacesInExternalModules(newExposedModuleId, getExposedInterfaces(newExposedModuleId));
+	private void setInterfacesInExternalComponents(String newExposedComponentId, Component newExposedComponent) {
+		setInterfacesInExternalComponents(newExposedComponentId, getExposedInterfaces(newExposedComponentId));
 	}
 
 	/**
-	 * @param exposedModuleId
+	 * @param exposedComponentId
 	 * @param exposedInterfaces
 	 */
-	private void setInterfacesInExternalModules(String exposedModuleId, Class<?>[] exposedInterfaces) {
-		for (Module externalModule : externalModules) {
-			externalModule.setReference(this.asLayer(), exposedModuleId, exposedInterfaces);
+	private void setInterfacesInExternalComponents(String exposedComponentId, Class<?>[] exposedInterfaces) {
+		for (Component externalComponent : externalComponents) {
+			externalComponent.setReference(this.getFacade(), exposedComponentId, exposedInterfaces);
 		}
 	}
 
 	/**
-	 * @param newExposedModuleId
-	 * @param newExposedModule
+	 * @param newExposedComponentId
+	 * @param newExposedComponent
 	 */
-	private void registerExternalModuleAsListener(String newExposedModuleId, Module newExposedModule) {
-		for (Module externalModule : externalModules) {
-			newExposedModule.register(externalModule);
+	private void registerExternalComponentAsListener(String newExposedComponentId, Component newExposedComponent) {
+		for (Component externalComponent : externalComponents) {
+			newExposedComponent.register(externalComponent);
 		}
 	}
 
 	/**
-	 * @param exposedModuleId
-	 * @param exposedModule
+	 * @param exposedComponentId
+	 * @param exposedComponent
 	 */
-	private void removeInterfacesForExternalModules(String exposedModuleId, Module exposedModule) {
-		for (Module externalModule : externalModules) {
-			externalModule.removeDependency(exposedModuleId);
+	private void removeInterfacesForExternalComponents(String exposedComponentId, Component exposedComponent) {
+		for (Component externalComponent : externalComponents) {
+			externalComponent.removeDependency(exposedComponentId);
 		}
 	}
 
 	/**
-	 * @param exposedModuleId
-	 * @param exposedModule
+	 * @param exposedComponentId
+	 * @param exposedComponent
 	 */
-	private void unregisterExternalListeners(String exposedModuleId, Module exposedModule) {
-		for (Module externalModule : externalModules) {
-			exposedModule.unregister(externalModule);
+	private void unregisterExternalListeners(String exposedComponentId, Component exposedComponent) {
+		for (Component externalComponent : externalComponents) {
+			exposedComponent.unregister(externalComponent);
 		}
 	}
 
 	/**
-	 * @param moduleId
-	 * @param module
+	 * @param componentId
+	 * @param component
 	 */
-	private void setDependenciesForNewInternalModule(String moduleId, Module module) {
-		for (String internalModuleId : internalModulesById.keySet()) {
-			if (!internalModuleId.equals(moduleId)) {
-				Module internalModule = internalModulesById.get(internalModuleId);
-				internalModule.setReference(this, moduleId, module.getInterfaces());
-				internalModule.register(module);
-				module.setReference(this, internalModuleId, internalModule.getInterfaces());
-				module.register(internalModule);
+	private void setDependenciesForNewInternalComponent(String componentId, Component component) {
+		for (String internalComponentId : internalComponentsById.keySet()) {
+			if (!internalComponentId.equals(componentId)) {
+				Component internalComponent = internalComponentsById.get(internalComponentId);
+				internalComponent.setReference(this, componentId, component.getInterfaces());
+				internalComponent.register(component);
+				component.setReference(this, internalComponentId, internalComponent.getInterfaces());
+				component.register(internalComponent);
 			}
 		}
 	}
 
 	/**
-	 * @param moduleId
-	 * @param module
+	 * @param componentId
+	 * @param component
 	 */
-	private void removeDependenciesForInternalModule(String moduleId, Module module) {
-		for (String internalModuleId : internalModulesById.keySet()) {
-			if (!internalModuleId.equals(moduleId)) {
-				Module internalModule = internalModulesById.get(internalModuleId);
-				internalModule.removeDependency(moduleId);
-				internalModule.unregister(module);
-				module.removeDependency(internalModuleId);
-				module.unregister(internalModule);
+	private void removeDependenciesForInternalComponent(String componentId, Component component) {
+		for (String internalComponentId : internalComponentsById.keySet()) {
+			if (!internalComponentId.equals(componentId)) {
+				Component internalComponent = internalComponentsById.get(internalComponentId);
+				internalComponent.removeDependency(componentId);
+				internalComponent.unregister(component);
+				component.removeDependency(internalComponentId);
+				component.unregister(internalComponent);
 			}
 		}
 	}
 
 	/**
-	 * @param externalModule
+	 * @param externalComponent
 	 */
-	private void setInterfacesForNewExternalModule(Module externalModule) {
-		for (String internalModuleId : internalModulesById.keySet()) {
-			if (isExposed(internalModuleId)) {
-				externalModule.setReference(this.asLayer(), internalModuleId, getExposedInterfaces(internalModuleId));
+	private void setInterfacesForNewExternalComponent(Component externalComponent) {
+		for (String internalComponentId : internalComponentsById.keySet()) {
+			if (isExposed(internalComponentId)) {
+				externalComponent.setReference(this.getFacade(), internalComponentId, getExposedInterfaces(internalComponentId));
 			}
 		}
 	}
 
 	/**
-	 * @param externalModule
+	 * @param externalComponent
 	 */
-	private void registerNewExternalModule(Module externalModule) {
-		for (String internalModuleId : internalModulesById.keySet()) {
-			Module internalModule = internalModulesById.get(internalModuleId);
-			internalModule.register(externalModule);
+	private void registerNewExternalComponent(Component externalComponent) {
+		for (String internalComponentId : internalComponentsById.keySet()) {
+			Component internalComponent = internalComponentsById.get(internalComponentId);
+			internalComponent.register(externalComponent);
 		}
 	}
 
 	/**
-	 * @param externalModule
+	 * @param externalComponent
 	 */
-	private void removeDependenciesForExternalModule(Module externalModule) {
-		for (String internalModuleId : internalModulesById.keySet()) {
-			if (isExposed(internalModuleId)) {
-				externalModule.removeDependency(internalModuleId);
+	private void removeDependenciesForExternalComponent(Component externalComponent) {
+		for (String internalComponentId : internalComponentsById.keySet()) {
+			if (isExposed(internalComponentId)) {
+				externalComponent.removeDependency(internalComponentId);
 			}
-			Module internalModule = internalModulesById.get(internalModuleId);
-			internalModule.unregister(externalModule);
+			Component internalComponent = internalComponentsById.get(internalComponentId);
+			internalComponent.unregister(externalComponent);
 		}
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 */
-	private void ensureIdNotRegisteredByOther(String moduleId) {
-		if (internalModulesById.containsKey(moduleId)) {
-			throw new ConfigurationException("module already registered under id '" + moduleId + "'");
+	private void ensureIdNotRegisteredByOther(String componentId) {
+		if (internalComponentsById.containsKey(componentId)) {
+			throw new ConfigurationException("component already registered under id '" + componentId + "'");
 		}
 	}
 
 	/**
-	 * @param module
+	 * @param component
 	 * @param requestedInterfaces
 	 */
-	private void ensureModuleExposesInterfaces(Module module, List<Class<?>> requestedInterfaces) {
-		List<Class<?>> moduleInterfaces = (List) Arrays.asList(module.getInterfaces());
+	private void ensureComponentExposesInterfaces(Component component, List<Class<?>> requestedInterfaces) {
+		List<Class<?>> componentInterfaces = (List) Arrays.asList(component.getInterfaces());
 		for (Class<?> exposedInterface : requestedInterfaces) {
-			if (!moduleInterfaces.contains(exposedInterface)) {
-				throw new IllegalArgumentException("module '" + module + "' does not expose interface " + exposedInterface);
+			if (!componentInterfaces.contains(exposedInterface)) {
+				throw new IllegalArgumentException("component '" + component + "' does not expose interface " + exposedInterface);
 			}
 		}
 	}
@@ -281,67 +281,67 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	/**
 	 * @return
 	 */
-	public Set<String> getExposedModuleIds() {
-		return exposedInterfacesByModuleId.keySet();
+	public Set<String> getExposedComponentIds() {
+		return exposedInterfacesByComponentId.keySet();
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @return
 	 */
-	public Class<?>[] getExposedInterfaces(String moduleId) {
-		if (!isExposed(moduleId)) {
-			throw new ConfigurationException("module with id '" + moduleId + "' is not exposed");
+	public Class<?>[] getExposedInterfaces(String componentId) {
+		if (!isExposed(componentId)) {
+			throw new ConfigurationException("component with id '" + componentId + "' is not exposed");
 		}
-		return (Class<?>[]) this.exposedInterfacesByModuleId.get(moduleId).toArray(new Class<?>[0]);
+		return (Class<?>[]) this.exposedInterfacesByComponentId.get(componentId).toArray(new Class<?>[0]);
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @param exposedInterface
 	 * @return
 	 */
-	public Object getProxy(String moduleId, Class<?> exposedInterface) {
+	public Object getProxy(String componentId, Class<?> exposedInterface) {
 
-		Module module = getInternalModule(moduleId);
-		return module.getProxy(exposedInterface);
+		Component component = getInternalComponent(componentId);
+		return component.getProxy(exposedInterface);
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @return
 	 */
-	private Module getInternalModule(String moduleId) {
-		return internalModulesById.get(moduleId);
+	private Component getInternalComponent(String componentId) {
+		return internalComponentsById.get(componentId);
 	}
 
 	/**
-	 * @param module
+	 * @param component
 	 * @return
 	 */
-	private Set<String> lookUpModuleIds(Module module) {
+	private Set<String> lookUpComponentIds(Component component) {
 		Set<String> retval = new HashSet<String>();
-		for (String moduleId : internalModulesById.keySet()) {
-			if (internalModulesById.get(moduleId) == module) {
-				retval.add(moduleId);
+		for (String componentId : internalComponentsById.keySet()) {
+			if (internalComponentsById.get(componentId) == component) {
+				retval.add(componentId);
 			}
 		}
 		return retval;
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @param interfaceClass
 	 * @return
 	 */
-	private boolean isExposed(String moduleId, Class<?> interfaceClass) {
-		Set<Class<?>> exposedInterfaces = exposedInterfacesByModuleId.get(moduleId);
+	private boolean isExposed(String componentId, Class<?> interfaceClass) {
+		Set<Class<?>> exposedInterfaces = exposedInterfacesByComponentId.get(componentId);
 		return exposedInterfaces != null && exposedInterfaces.contains(interfaceClass);
 	}
 
 
 	/**
-	 * Invoked through proxy instance for layer.
+	 * Invoked through proxy instance for facade.
 	 *
 	 * @param proxy
 	 * @param method
@@ -370,41 +370,41 @@ public class StandardCluster implements Cluster, Layer, InvocationHandler {
 	/**
 	 * @return
 	 */
-	public Layer asLayer() {
-		return (Layer) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{Layer.class}, this);
+	public Facade getFacade() {
+		return (Facade) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{Facade.class}, this);
 	}
 
 	/**
 	 * @return
 	 */
-	public Map<String, Module> getInternalModules() {
-		return new HashMap<String, Module>(internalModulesById);
+	public Map<String, Component> getInternalComponents() {
+		return new HashMap<String, Component>(internalComponentsById);
 	}
 
 	/**
 	 * @return
 	 */
-	public Set<Module> getExternalModules() {
-		return new HashSet<Module>(externalModules);
+	public Set<Component> getExternalComponents() {
+		return new HashSet<Component>(externalComponents);
 	}
 
 	/**
-	 * @param internalModuleId
+	 * @param internalComponentId
 	 * @param interfaces
 	 */
-	public void expose(String internalModuleId, Class<?>... interfaces) {
-		if (!internalModulesById.containsKey(internalModuleId)) {
-			throw new ConfigurationException("module '" + internalModuleId + "' is not connected");
+	public void expose(String internalComponentId, Class<?>... interfaces) {
+		if (!internalComponentsById.containsKey(internalComponentId)) {
+			throw new ConfigurationException("component '" + internalComponentId + "' is not connected");
 		}
-		if (isExposed(internalModuleId)) {
+		if (isExposed(internalComponentId)) {
 			if (interfaces == null || interfaces.length == 0) {
-				exposedInterfacesByModuleId.remove(internalModuleId);
-				this.removeInterfacesForExternalModules(internalModuleId, this.getInternalModule(internalModuleId));
+				exposedInterfacesByComponentId.remove(internalComponentId);
+				this.removeInterfacesForExternalComponents(internalComponentId, this.getInternalComponent(internalComponentId));
 			}
 		}
-		ensureModuleExposesInterfaces(this.getInternalModule(internalModuleId), (List) Arrays.asList(interfaces));
-		exposedInterfacesByModuleId.put(internalModuleId, new HashSet<Class<?>>(Arrays.asList(interfaces)));
-		this.setInterfacesInExternalModules(internalModuleId, interfaces);
+		ensureComponentExposesInterfaces(this.getInternalComponent(internalComponentId), (List) Arrays.asList(interfaces));
+		exposedInterfacesByComponentId.put(internalComponentId, new HashSet<Class<?>>(Arrays.asList(interfaces)));
+		this.setInterfacesInExternalComponents(internalComponentId, interfaces);
 	}
 
 

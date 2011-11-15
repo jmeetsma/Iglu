@@ -23,44 +23,44 @@ package org.ijsberg.iglu;
 import java.util.Set;
 
 /**
- * A layer exposes certain interfaces of a cluster of modules.
+ * A facade exposes certain interfaces of a cluster of components.
  * Proxies for these interfaces can be obtained directly or by
  * reference injection upon connection.
- * It's also possible to browse all exposed modules and their exposed
+ * It's also possible to browse all exposed components and their exposed
  * interfaces.
  */
-public interface Layer {
+public interface Facade {
 
 	/**
-	 * Connects anonymous, untrusted, external module.
-	 * The layer's exposed interfaces will be registered with the module.
+	 * Connects anonymous, untrusted, external component.
+	 * The facade's exposed interfaces will be registered with the component.
 	 *
-	 * @param externalModule
+	 * @param externalComponent
 	 */
-	void connect(Module externalModule);
+	void connect(Component externalComponent);
 
 	/**
-	 * Disconnects an internal or external module.
+	 * Disconnects an internal or external component.
 	 *
-	 * @param module
+	 * @param component
 	 */
-	void disconnect(Module module);
+	void disconnect(Component component);
 
 	/**
-	 * @return IDs of modules that expose interfaces
+	 * @return IDs of components that expose interfaces
 	 */
-	public Set<String> getExposedModuleIds();
+	public Set<String> getExposedComponentIds();
 
 	/**
-	 * @param moduleId
-	 * @return an array of exposed interfaces of a certain module
+	 * @param componentId
+	 * @return an array of exposed interfaces of a certain component
 	 */
-	public Class<?>[] getExposedInterfaces(String moduleId);
+	public Class<?>[] getExposedInterfaces(String componentId);
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @param exposedInterface
-	 * @return a proxy for a module that exposes the desired interface
+	 * @return a proxy for a component that exposes the desired interface
 	 */
-	Object getProxy(String moduleId, Class<?> exposedInterface);
+	Object getProxy(String componentId, Class<?> exposedInterface);
 }

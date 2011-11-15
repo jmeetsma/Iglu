@@ -26,11 +26,11 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Modules are elementary building blocks of an application's structure.
- * An object that represents a structural part (component) of an application may be embedded in a module.
- * A module facilitates setting of properties as well as references to other components.
+ * Components are elementary building blocks of an application's structure.
+ * An object that represents a structural part (component) of an application may be embedded in a component.
+ * A component facilitates setting of properties as well as references to other components.
  */
-public interface Module {
+public interface Component {
 
 	/**
 	 * Injects properties into the embedded object.
@@ -56,45 +56,45 @@ public interface Module {
 	Object getProxy(Class<?> interfaceClass);
 
 	/**
-	 * Sets a reference to a module if the embedded class contains an appropriate setter.
+	 * Sets a reference to a component if the embedded class contains an appropriate setter.
 	 * (Also known as dependency injection.)
-	 * The module may actually have references for every exposed interface.
+	 * The component may actually have references for every exposed interface.
 	 * This method must also be used to update references in case the exposure of interfaces changes.
 	 *
-	 * @param layer	  layer that must expose a module with id moduleId and given interfaces
-	 * @param moduleId   ID of module
-	 * @param interfaces the interfaces the module exposes
+	 * @param facade	facade that must expose a component with id componentId and given interfaces
+	 * @param componentId ID of the component
+	 * @param interfaces the interfaces the component exposes
 	 */
-	void setReference(Layer layer, String moduleId, Class<?>... interfaces);
+	void setReference(Facade facade, String componentId, Class<?>... interfaces);
 
 	/**
-	 * Removes previously injected proxies for a certain module.
+	 * Removes previously injected proxies for a certain component.
 	 *
-	 * @param moduleId
+	 * @param componentId
 	 */
-	void removeDependency(String moduleId);
+	void removeDependency(String componentId);
 
 	/**
-	 * Registers a module (as listener) in case the embedded object implements
+	 * Registers a component (as listener) in case the embedded object implements
 	 * a method named 'register' with a suiting interface.
 	 *
-	 * @param module
+	 * @param component
 	 */
-	void register(Module module);
+	void register(Component component);
 
 	/**
-	 * Unegisters a previously registered module in case the embedded object implements
+	 * Unegisters a previously registered component in case the embedded object implements
 	 * a method named 'unregister' with a suitable interface.
 	 *
-	 * @param module
+	 * @param component
 	 */
-	void unregister(Module module);
+	void unregister(Component component);
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 * @return a set of classes of interfaces that have been injected by setter
 	 */
-	Set<Class<?>> getInjectedInterfaces(String moduleId);
+	Set<Class<?>> getInjectedInterfaces(String componentId);
 
 	/**
 	 * Sets interceptor for invocations of a particular interface to deal
@@ -107,7 +107,7 @@ public interface Module {
 
 	/**
 	 *
-	 * @param methodName name of a method declared by a module's interface
+	 * @param methodName name of a method declared by a component's interface
 	 * @param parameters
 	 * @return
 	 * @throws InvocationTargetException in case the invoked method throws

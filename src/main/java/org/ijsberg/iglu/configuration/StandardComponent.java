@@ -20,9 +20,9 @@
 
 package org.ijsberg.iglu.configuration;
 
+import org.ijsberg.iglu.Component;
 import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Layer;
-import org.ijsberg.iglu.Module;
+import org.ijsberg.iglu.Facade;
 import org.ijsberg.iglu.util.reflection.MethodInvocation;
 import org.ijsberg.iglu.util.types.Converter;
 import org.ijsberg.iglu.util.reflection.ReflectionSupport;
@@ -34,9 +34,9 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
- * Standard implementation of Module.
+ * Standard implementation of Component.
  */
-public class StandardModule implements Module, InvocationHandler {
+public class StandardComponent implements Component, InvocationHandler {
 
 	public static final String PROPERTIES_PROPERTY_KEY = "properties";
 	public static final String REGISTER_LISTENER_METHOD_NAME = "register";
@@ -48,11 +48,11 @@ public class StandardModule implements Module, InvocationHandler {
 	private Properties setterInjectedProperties = new Properties();
 
 	private HashMap<Class<?>, InvocationHandler> invocationHandlers = new HashMap<Class<?>, InvocationHandler>();
-	private HashMap<String, Set<Class<?>>> injectedProxyTypesByModuleId = new HashMap<String, Set<Class<?>>>();
+	private HashMap<String, Set<Class<?>>> injectedProxyTypesByComponentId = new HashMap<String, Set<Class<?>>>();
 
-	private Map<Module, Map<Class<?>, Object>> registeredListenersByModule = new HashMap<Module, Map<Class<?>, Object>>();
+	private Map<Component, Map<Class<?>, Object>> registeredListenersByComponent = new HashMap<Component, Map<Class<?>, Object>>();
 
-	public StandardModule(Object implementation) {
+	public StandardComponent(Object implementation) {
 		if (implementation == null) {
 			throw new NullPointerException("implementation can not be null");
 		}
@@ -61,63 +61,63 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 	/**
-	 * @throws NullPointerException if the cluster does not expose a module with ID moduleId
+	 * @throws NullPointerException if the cluster does not expose a component with ID componentId
 	 */
-	public void setReference(Layer layer, String moduleId, Class<?>... interfaces) {
+	public void setReference(Facade facade, String componentId, Class<?>... interfaces) {
 
-		if (injectedProxyTypesByModuleId.containsKey(moduleId)) {
-			resetReference(layer, moduleId, interfaces);
+		if (injectedProxyTypesByComponentId.containsKey(componentId)) {
+			resetReference(facade, componentId, interfaces);
 		}
 		else {
-			Set<Class<?>> injectedProxyTypes = injectProxies(moduleId, Arrays.asList(interfaces), layer);
-			injectedProxyTypesByModuleId.put(moduleId, injectedProxyTypes);
+			Set<Class<?>> injectedProxyTypes = injectProxies(componentId, Arrays.asList(interfaces), facade);
+			injectedProxyTypesByComponentId.put(componentId, injectedProxyTypes);
 		}
 	}
 
 	/**
-	 * @param layer
-	 * @param moduleId
+	 * @param facade
+	 * @param componentId
 	 * @param interfaces
 	 */
-	private void resetReference(Layer layer, String moduleId, Class<?>[] interfaces) {
-		Set<Class<?>> currentlyInjectedInterfaces = injectedProxyTypesByModuleId.get(moduleId);
+	private void resetReference(Facade facade, String componentId, Class<?>[] interfaces) {
+		Set<Class<?>> currentlyInjectedInterfaces = injectedProxyTypesByComponentId.get(componentId);
 
 		Set<Class<?>> exposedInterfaces = new HashSet<Class<?>>(Arrays.asList(interfaces));
 
 		Set<Class<?>> interfacesToBeRemoved = new HashSet<Class<?>>(currentlyInjectedInterfaces);
 		interfacesToBeRemoved.removeAll(exposedInterfaces);
 		currentlyInjectedInterfaces.removeAll(interfacesToBeRemoved);
-		injectNulls(moduleId, interfacesToBeRemoved);
+		injectNulls(componentId, interfacesToBeRemoved);
 
 		Set<Class<?>> interfacesToAdd = new HashSet<Class<?>>(exposedInterfaces);
 		interfacesToAdd.removeAll(currentlyInjectedInterfaces);
 
-		Set<Class<?>> injectedProxyTypes = injectProxies(moduleId, interfacesToAdd, layer);
+		Set<Class<?>> injectedProxyTypes = injectProxies(componentId, interfacesToAdd, facade);
 		currentlyInjectedInterfaces.addAll(injectedProxyTypes);
 
 		if (currentlyInjectedInterfaces.isEmpty()) {
-			injectedProxyTypesByModuleId.remove(moduleId);
+			injectedProxyTypesByComponentId.remove(componentId);
 		}
 	}
 
 	/**
-	 * @param moduleId
+	 * @param componentId
 	 */
-	public void removeDependency(String moduleId) {
-		injectNulls(moduleId, injectedProxyTypesByModuleId.get(moduleId));
-		injectedProxyTypesByModuleId.remove(moduleId);
+	public void removeDependency(String componentId) {
+		injectNulls(componentId, injectedProxyTypesByComponentId.get(componentId));
+		injectedProxyTypesByComponentId.remove(componentId);
 	}
 
 	/**
-	 * @param module
+	 * @param component
 	 */
-	public void register(Module module) {
-		for (Class<?> interfaceClass : module.getInterfaces()) {
+	public void register(Component component) {
+		for (Class<?> interfaceClass : component.getInterfaces()) {
 			try {
 				Method method = implementation.getClass().getMethod(REGISTER_LISTENER_METHOD_NAME, interfaceClass);
-				Object listenerProxy = module.getProxy(interfaceClass);
+				Object listenerProxy = component.getProxy(interfaceClass);
 				invokeMethod(method, listenerProxy);
-				saveRegisteredListenerProxy(module, interfaceClass, listenerProxy);
+				saveRegisteredListenerProxy(component, interfaceClass, listenerProxy);
 			}
 			catch (NoSuchMethodException ignore) {
 			}
@@ -125,10 +125,10 @@ public class StandardModule implements Module, InvocationHandler {
 	}
 
 
-	public void unregister(Module module) {
-		Map<Class<?>, Object> registeredListeners = registeredListenersByModule.get(module);
+	public void unregister(Component component) {
+		Map<Class<?>, Object> registeredListeners = registeredListenersByComponent.get(component);
 		if (registeredListeners != null) {
-			for (Class<?> interfaceClass : module.getInterfaces()) {
+			for (Class<?> interfaceClass : component.getInterfaces()) {
 				try {
 					Method method = implementation.getClass().getMethod(UNREGISTER_LISTENER_METHOD_NAME, interfaceClass);
 					Object listenerProxy = registeredListeners.get(interfaceClass);
@@ -143,24 +143,24 @@ public class StandardModule implements Module, InvocationHandler {
 		}
 	}
 
-	private void saveRegisteredListenerProxy(Module module,
+	private void saveRegisteredListenerProxy(Component component,
 											 Class<?> interfaceClass, Object listenerProxy) {
 
-		Map<Class<?>, Object> registeredListeners = registeredListenersByModule.get(module);
+		Map<Class<?>, Object> registeredListeners = registeredListenersByComponent.get(component);
 		if (registeredListeners == null) {
 			registeredListeners = new HashMap<Class<?>, Object>();
-			registeredListenersByModule.put(module, registeredListeners);
+			registeredListenersByComponent.put(component, registeredListeners);
 		}
 		registeredListeners.put(interfaceClass, listenerProxy);
 	}
 
 
-	private HashSet<Class<?>> injectProxies(String otherComponentId, Collection<Class<?>> interfaces, Layer layer) {
+	private HashSet<Class<?>> injectProxies(String otherComponentId, Collection<Class<?>> interfaces, Facade facade) {
 		HashSet<Class<?>> injectedProxyTypes = new HashSet<Class<?>>();
-		for (Method setter : getModuleSettersByPropertyKey(otherComponentId)) {
+		for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
 			for (Class<?> interfaceClass : interfaces) {
 				if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
-					Object proxy = layer.getProxy(otherComponentId, interfaceClass);
+					Object proxy = facade.getProxy(otherComponentId, interfaceClass);
 					invokeMethod(setter, proxy);
 					injectedProxyTypes.add(interfaceClass);
 				}
@@ -171,7 +171,7 @@ public class StandardModule implements Module, InvocationHandler {
 
 
 	private void injectNulls(String otherComponentId, Set<Class<?>> interfaces) {
-		for (Method setter : getModuleSettersByPropertyKey(otherComponentId)) {
+		for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
 			for (Class<?> interfaceClass : interfaces) {
 				if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
 					invokeMethod(setter, null);
@@ -223,7 +223,7 @@ public class StandardModule implements Module, InvocationHandler {
 		return setterInjectedProperties;
 	}
 
-	private Set<Method> getModuleSettersByPropertyKey(String key) {
+	private Set<Method> getComponentSettersByPropertyKey(String key) {
 		String setterName = "set" + makeFirstCharUpperCase(key);
 		return ReflectionSupport.getMethodsByName(implementation.getClass(), setterName, 1);
 	}
@@ -236,7 +236,7 @@ public class StandardModule implements Module, InvocationHandler {
 
 
 	private void injectPropertyIfMatchingSetterFound(String key, Object value) {
-		Set<Method> setters = getModuleSettersByPropertyKey(key);
+		Set<Method> setters = getComponentSettersByPropertyKey(key);
 		if (setters.size() > 1) {
 			throw new ConfigurationException("more than 1 (" + setters.size() +
 					") setter found for property '" + key + "'");
@@ -302,10 +302,10 @@ public class StandardModule implements Module, InvocationHandler {
 		return retval;
 	}
 
-	public Set<Class<?>> getInjectedInterfaces(String moduleId) {
+	public Set<Class<?>> getInjectedInterfaces(String componentId) {
 		Set<Class<?>> retval = new HashSet<Class<?>>();
-		if (injectedProxyTypesByModuleId.containsKey(moduleId)) {
-			retval.addAll(injectedProxyTypesByModuleId.get(moduleId));
+		if (injectedProxyTypesByComponentId.containsKey(componentId)) {
+			retval.addAll(injectedProxyTypesByComponentId.get(componentId));
 		}
 		return retval;
 	}

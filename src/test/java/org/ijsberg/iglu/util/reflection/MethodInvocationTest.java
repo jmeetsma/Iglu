@@ -20,7 +20,7 @@
 
 package org.ijsberg.iglu.util.reflection;
 
-import org.ijsberg.iglu.configuration.StandardModule;
+import org.ijsberg.iglu.configuration.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
@@ -76,8 +76,8 @@ public class MethodInvocationTest {
 	@Test
 	public void testInvokeInvocationHandler() throws Exception {
 		Apple apple = new Apple();
-		StandardModule appleModule = new StandardModule(apple);
-		MethodInvocation invocation = new MethodInvocation(appleModule, apple, "setMessage",
+		StandardComponent appleComponent = new StandardComponent(apple);
+		MethodInvocation invocation = new MethodInvocation(appleComponent, apple, "setMessage",
 				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 1).toArray(new Method[0]), "hello");
 
 		Object result = invocation.invoke();
@@ -85,18 +85,18 @@ public class MethodInvocationTest {
 
 		assertEquals("hello", apple.getMessage());
 
-		invocation = new MethodInvocation(appleModule, apple, "getMessage",
+		invocation = new MethodInvocation(appleComponent, apple, "getMessage",
 				ReflectionSupport.getMethodsByName(AppleInterface.class, "getMessage", 0).toArray(new Method[0]));
 		result = invocation.invoke();
 
 		assertEquals("hello", result);
 
-		appleModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor("Bingo"));
+		appleComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor("Bingo"));
 		result = invocation.invoke();
 
 		assertEquals("helloBingo", result);
 
-		invocation = new MethodInvocation(appleModule, apple, "getIntFromBanana",
+		invocation = new MethodInvocation(appleComponent, apple, "getIntFromBanana",
 				ReflectionSupport.getMethodsByName(Apple.class, "getIntFromBanana", 0).toArray(new Method[0]));
 		try {
 			invocation.invoke();
@@ -105,7 +105,7 @@ public class MethodInvocationTest {
 			assertEquals(NullPointerException.class, expected.getTargetException().getClass());
 		}
 
-		invocation = new MethodInvocation(appleModule, apple, "setMessage",
+		invocation = new MethodInvocation(appleComponent, apple, "setMessage",
 				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 1).toArray(new Method[0]));
 
 		try {
@@ -113,7 +113,7 @@ public class MethodInvocationTest {
 			fail("NoSuchMethodException expected");
 		} catch (NoSuchMethodException expected) {}
 
-		invocation = new MethodInvocation(appleModule, apple, "absentMessage",
+		invocation = new MethodInvocation(appleComponent, apple, "absentMessage",
 				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 0).toArray(new Method[0]));
 		try {
 			invocation.invoke();

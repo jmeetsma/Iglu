@@ -27,8 +27,8 @@ import static org.junit.Assert.fail;
 
 import org.ijsberg.iglu.Cluster;
 import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Layer;
-import org.ijsberg.iglu.Module;
+import org.ijsberg.iglu.Facade;
+import org.ijsberg.iglu.Component;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.Banana;
@@ -45,96 +45,96 @@ public class StandardClusterTest {
 
 	private StandardCluster fruit;
 	private Apple appleCore;
-	private Module appleModule;
+	private Component appleComponent;
 	private Banana bananaCore;
-	private Module bananaModule;
+	private Component bananaComponent;
 	private Elstar elstar;
-	private Module elstarModule;
+	private Component elstarComponent;
 
 
 	private StandardCluster cluster;
 	private Notifier notifier;
 	private Listener listener1;
 	private Listener listener2;
-	private Module notifierModule;
-	private Module listenerModule1;
-	private Module listenerModule2;
+	private Component notifierComponent;
+	private Component listenerComponent1;
+	private Component listenerComponent2;
 
 	@Before
 	public void setUp() throws Exception {
 		fruit = new StandardCluster();
 		appleCore = new Apple();
-		appleModule = new StandardModule(appleCore);
+		appleComponent = new StandardComponent(appleCore);
 		bananaCore = new Banana(27);
-		bananaModule = new StandardModule(bananaCore);
+		bananaComponent = new StandardComponent(bananaCore);
 		elstar = new Elstar();
-		elstarModule = new StandardModule(elstar);
+		elstarComponent = new StandardComponent(elstar);
 
 		cluster = new StandardCluster();
 		notifier = new Notifier();
 		listener1 = new Listener("listener 1");
 		listener2 = new Listener("listener 2");
-		notifierModule = new StandardModule(notifier);
-		listenerModule1 = new StandardModule(listener1);
-		listenerModule2 = new StandardModule(listener2);
+		notifierComponent = new StandardComponent(notifier);
+		listenerComponent1 = new StandardComponent(listener1);
+		listenerComponent2 = new StandardComponent(listener2);
 	}
 
 	@Test
 	public void testCluster() throws Exception {
-		assertFalse(Cluster.class.isAssignableFrom(Layer.class));
-		assertFalse(Layer.class.isAssignableFrom(Cluster.class));
+		assertFalse(Cluster.class.isAssignableFrom(Facade.class));
+		assertFalse(Facade.class.isAssignableFrom(Cluster.class));
 	}
 
 	@Test
-	public void testConnectInternalModule() throws Exception {
-		assertEquals(0, fruit.getInternalModules().size());
-		fruit.connect("apple", appleModule);
-		assertEquals(1, fruit.getInternalModules().size());
+	public void testConnectInternalComponent() throws Exception {
+		assertEquals(0, fruit.getInternalComponents().size());
+		fruit.connect("apple", appleComponent);
+		assertEquals(1, fruit.getInternalComponents().size());
 	}
 
 	@Test
-	public void testConnectInternalModuleAndExpose() throws Exception {
-		assertEquals(0, fruit.getExposedModuleIds().size());
-		fruit.connect("apple", appleModule, AppleInterface.class);
-		assertEquals(1, fruit.getExposedModuleIds().size());
-		assertEquals("apple", fruit.getExposedModuleIds().toArray()[0]);
+	public void testConnectInternalComponentAndExpose() throws Exception {
+		assertEquals(0, fruit.getExposedComponentIds().size());
+		fruit.connect("apple", appleComponent, AppleInterface.class);
+		assertEquals(1, fruit.getExposedComponentIds().size());
+		assertEquals("apple", fruit.getExposedComponentIds().toArray()[0]);
 	}
 
 	@Test
-	public void testDisconnectInternalModule() throws Exception {
-		fruit.connect("apple", appleModule);
-		assertEquals(1, fruit.getInternalModules().size());
-		fruit.disconnect(appleModule);
-		assertEquals(0, fruit.getInternalModules().size());
+	public void testDisconnectInternalComponent() throws Exception {
+		fruit.connect("apple", appleComponent);
+		assertEquals(1, fruit.getInternalComponents().size());
+		fruit.disconnect(appleComponent);
+		assertEquals(0, fruit.getInternalComponents().size());
 	}
 
 	@Test
-	public void testDisonnectInternalModuleAndExpose() throws Exception {
-		fruit.connect("apple", appleModule, AppleInterface.class);
-		fruit.disconnect(appleModule);
-		assertEquals(0, fruit.getExposedModuleIds().size());
+	public void testDisonnectInternalComponentAndExpose() throws Exception {
+		fruit.connect("apple", appleComponent, AppleInterface.class);
+		fruit.disconnect(appleComponent);
+		assertEquals(0, fruit.getExposedComponentIds().size());
 	}
 
 	@Test
-	public void testConnectExternalModule() throws Exception {
-		assertEquals(0, fruit.getExternalModules().size());
-		fruit.asLayer().connect(appleModule);
-		assertEquals(1, fruit.getExternalModules().size());
+	public void testConnectExternalComponent() throws Exception {
+		assertEquals(0, fruit.getExternalComponents().size());
+		fruit.getFacade().connect(appleComponent);
+		assertEquals(1, fruit.getExternalComponents().size());
 	}
 
 	@Test
-	public void testDisconnectExternalModule() throws Exception {
-		fruit.asLayer().connect(appleModule);
-		assertEquals(1, fruit.getExternalModules().size());
-		fruit.asLayer().disconnect(appleModule);
-		assertEquals(0, fruit.getExternalModules().size());
+	public void testDisconnectExternalComponent() throws Exception {
+		fruit.getFacade().connect(appleComponent);
+		assertEquals(1, fruit.getExternalComponents().size());
+		fruit.getFacade().disconnect(appleComponent);
+		assertEquals(0, fruit.getExternalComponents().size());
 	}
 
 	@Test
-	public void testConnectExternalModuleTwice() throws Exception {
-		fruit.asLayer().connect(appleModule);
+	public void testConnectExternalComponentTwice() throws Exception {
+		fruit.getFacade().connect(appleComponent);
 		try {
-			fruit.asLayer().connect(appleModule);
+			fruit.getFacade().connect(appleComponent);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
@@ -142,10 +142,10 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectExternalModuleAsInternalModule() throws Exception {
-		fruit.asLayer().connect(appleModule);
+	public void testConnectExternalComponentAsInternalComponent() throws Exception {
+		fruit.getFacade().connect(appleComponent);
 		try {
-			fruit.connect("apple", appleModule);
+			fruit.connect("apple", appleComponent);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
@@ -153,10 +153,10 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectInternalModuleAsExternalModule() throws Exception {
-		fruit.connect("apple", appleModule);
+	public void testConnectInternalComponentAsExternalComponent() throws Exception {
+		fruit.connect("apple", appleComponent);
 		try {
-			fruit.asLayer().connect(appleModule);
+			fruit.getFacade().connect(appleComponent);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
@@ -164,10 +164,10 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectInternalModuleTwice1() throws Exception {
-		fruit.connect("apple", appleModule);
+	public void testConnectInternalComponentTwice1() throws Exception {
+		fruit.connect("apple", appleComponent);
 		try {
-			fruit.connect("apple", appleModule);
+			fruit.connect("apple", appleComponent);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
@@ -175,33 +175,33 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectInternalModuleTwice2() throws Exception {
-		fruit.connect("red apple", appleModule);
-		fruit.connect("sumptious apple", appleModule);
-		assertEquals(2, fruit.getInternalModules().size());
+	public void testConnectInternalComponentTwice2() throws Exception {
+		fruit.connect("red apple", appleComponent);
+		fruit.connect("sumptious apple", appleComponent);
+		assertEquals(2, fruit.getInternalComponents().size());
 	}
 
 	@Test
-	public void testConnectInternalModuleTwice3() throws Exception {
-		fruit.connect("apple", elstarModule, AppleInterface.class);
-		fruit.connect("elstar", elstarModule, ElstarInterface.class);
-		assertEquals(2, fruit.getInternalModules().size());
-		assertEquals(2, fruit.getExposedModuleIds().size());
+	public void testConnectInternalComponentTwice3() throws Exception {
+		fruit.connect("apple", elstarComponent, AppleInterface.class);
+		fruit.connect("elstar", elstarComponent, ElstarInterface.class);
+		assertEquals(2, fruit.getInternalComponents().size());
+		assertEquals(2, fruit.getExposedComponentIds().size());
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
 		assertEquals(1, fruit.getExposedInterfaces("elstar").length);
 	}
 
 	@Test
-	public void testDisonnectInternalModuleTwice3() throws Exception {
-		fruit.connect("apple", elstarModule, AppleInterface.class);
-		fruit.connect("elstar", elstarModule, ElstarInterface.class);
-		fruit.disconnect(elstarModule);
-		assertEquals(0, fruit.getInternalModules().size());
-		assertEquals(0, fruit.getExposedModuleIds().size());
+	public void testDisonnectInternalComponentTwice3() throws Exception {
+		fruit.connect("apple", elstarComponent, AppleInterface.class);
+		fruit.connect("elstar", elstarComponent, ElstarInterface.class);
+		fruit.disconnect(elstarComponent);
+		assertEquals(0, fruit.getInternalComponents().size());
+		assertEquals(0, fruit.getExposedComponentIds().size());
 	}
 
 	@Test
-	public void testConnectInjectionInExternalModule() throws Exception {
+	public void testConnectInjectionInExternalComponent() throws Exception {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
@@ -209,26 +209,26 @@ public class StandardClusterTest {
 		catch (NullPointerException eexpected) {
 		}
 
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
-		fruit.asLayer().connect(appleModule);
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
+		fruit.getFacade().connect(appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
 	@Test
-	public void testConnectInjectionInExternalModule2() throws Exception {
+	public void testConnectInjectionInExternalComponent2() throws Exception {
 
-		fruit.asLayer().connect(appleModule);
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
+		fruit.getFacade().connect(appleComponent);
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
 
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
 
 	@Test
-	public void testConnectInjectionInExternalModule3() throws Exception {
-		fruit.connect("banana", bananaModule);
-		fruit.asLayer().connect(appleModule);
+	public void testConnectInjectionInExternalComponent3() throws Exception {
+		fruit.connect("banana", bananaComponent);
+		fruit.getFacade().connect(appleComponent);
 		try {
 			appleCore.getIntFromBanana();
 			fail();
@@ -238,10 +238,10 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectInjectionInExternalModule4() throws Exception {
+	public void testConnectInjectionInExternalComponent4() throws Exception {
 
-		fruit.asLayer().connect(appleModule);
-		fruit.connect("banana", bananaModule);
+		fruit.getFacade().connect(appleComponent);
+		fruit.connect("banana", bananaComponent);
 		try {
 			appleCore.getIntFromBanana();
 			fail();
@@ -251,16 +251,16 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testDisconnectInternalModuleFromExternal() throws Exception {
+	public void testDisconnectInternalComponentFromExternal() throws Exception {
 
-		fruit.connect("banana", bananaModule, BananaInterface.class);
-		fruit.asLayer().connect(appleModule);
+		fruit.connect("banana", bananaComponent, BananaInterface.class);
+		fruit.getFacade().connect(appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 
-		fruit.disconnect(bananaModule);
+		fruit.disconnect(bananaComponent);
 
-		assertEquals(0, fruit.getInternalModules().size());
+		assertEquals(0, fruit.getInternalComponents().size());
 
 		try {
 			appleCore.getIntFromBanana();
@@ -272,17 +272,17 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testDisconnectExternalModuleFromInternal() throws Exception {
+	public void testDisconnectExternalComponentFromInternal() throws Exception {
 
-		fruit.connect("banana", bananaModule, BananaInterface.class);
-		fruit.asLayer().connect(appleModule);
+		fruit.connect("banana", bananaComponent, BananaInterface.class);
+		fruit.getFacade().connect(appleComponent);
 
 
 		assertEquals(27, appleCore.getIntFromBanana());
 
-		fruit.asLayer().disconnect(appleModule);
+		fruit.getFacade().disconnect(appleComponent);
 
-		assertEquals(0, fruit.getExternalModules().size());
+		assertEquals(0, fruit.getExternalComponents().size());
 
 		try {
 			appleCore.getIntFromBanana();
@@ -294,24 +294,24 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testDisconnectDoubleConnectedInternalModule() throws Exception {
-		fruit.connect("red apple", appleModule);
-		fruit.connect("sumptious apple", appleModule);
-		fruit.disconnect(appleModule);
-		assertEquals(0, fruit.getInternalModules().size());
+	public void testDisconnectDoubleConnectedInternalComponent() throws Exception {
+		fruit.connect("red apple", appleComponent);
+		fruit.connect("sumptious apple", appleComponent);
+		fruit.disconnect(appleComponent);
+		assertEquals(0, fruit.getInternalComponents().size());
 	}
 
 	@Test
-	public void testDisconnectInjectionInInternalModule() throws Exception {
+	public void testDisconnectInjectionInInternalComponent() throws Exception {
 
-		fruit.connect("banana", bananaModule);
-		fruit.connect("apple", appleModule);
+		fruit.connect("banana", bananaComponent);
+		fruit.connect("apple", appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 
-		fruit.disconnect(bananaModule);
+		fruit.disconnect(bananaComponent);
 
-		assertEquals(1, fruit.getInternalModules().size());
+		assertEquals(1, fruit.getInternalComponents().size());
 
 		try {
 			appleCore.getIntFromBanana();
@@ -323,16 +323,16 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testDisconnectInjectionInInternalModule2() throws Exception {
+	public void testDisconnectInjectionInInternalComponent2() throws Exception {
 
-		fruit.connect("banana", bananaModule);
-		fruit.connect("apple", appleModule);
+		fruit.connect("banana", bananaComponent);
+		fruit.connect("apple", appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 
-		fruit.disconnect(appleModule);
+		fruit.disconnect(appleComponent);
 
-		assertEquals(1, fruit.getInternalModules().size());
+		assertEquals(1, fruit.getInternalComponents().size());
 
 		try {
 			appleCore.getIntFromBanana();
@@ -344,9 +344,9 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testConnectInjectionInInternalModule() throws Exception {
+	public void testConnectInjectionInInternalComponent() throws Exception {
 
-		assertEquals(0, fruit.getInternalModules().size());
+		assertEquals(0, fruit.getInternalComponents().size());
 
 		try {
 			appleCore.getIntFromBanana();
@@ -355,87 +355,87 @@ public class StandardClusterTest {
 		catch (NullPointerException e) {
 		}
 
-		fruit.connect("banana", bananaModule);
-		fruit.connect("apple", appleModule);
+		fruit.connect("banana", bananaComponent);
+		fruit.connect("apple", appleComponent);
 
-		assertEquals(2, fruit.getInternalModules().size());
-
-		assertEquals(27, appleCore.getIntFromBanana());
-	}
-
-	@Test
-	public void testConnectInjectionInInternalModule2() throws Exception {
-
-		fruit.connect("apple", appleModule);
-		fruit.connect("banana", bananaModule);
+		assertEquals(2, fruit.getInternalComponents().size());
 
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
+	@Test
+	public void testConnectInjectionInInternalComponent2() throws Exception {
+
+		fruit.connect("apple", appleComponent);
+		fruit.connect("banana", bananaComponent);
+
+		assertEquals(27, appleCore.getIntFromBanana());
+	}
+
 
 	@Test
-	public void testConnectExternalModulesMustNotRegisterListeners() throws Exception {
+	public void testConnectExternalComponentsMustNotRegisterListeners() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(notifierModule);
+		cluster.getFacade().connect(notifierComponent);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule1);
+		cluster.getFacade().connect(listenerComponent1);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testConnectExternalModulesMustNotRegisterListeners2() throws Exception {
+	public void testConnectExternalComponentsMustNotRegisterListeners2() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule1);
+		cluster.getFacade().connect(listenerComponent1);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(notifierModule);
+		cluster.getFacade().connect(notifierComponent);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testConnectRegisterExternalListenersToUnexposedModule() throws Exception {
+	public void testConnectRegisterExternalListenersToUnexposedComponent() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule);
+		cluster.connect("notifier", notifierComponent);
 		assertFalse(cluster.isExposed("notifier"));
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule1);
+		cluster.getFacade().connect(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule2);
+		cluster.getFacade().connect(listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testConnectRegisterExternalListenersToExposedModule() throws Exception {
+	public void testConnectRegisterExternalListenersToExposedComponent() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule, NotifierInterface.class);
+		cluster.connect("notifier", notifierComponent, NotifierInterface.class);
 		assertTrue(cluster.isExposed("notifier"));
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule1);
+		cluster.getFacade().connect(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().connect(listenerModule2);
+		cluster.getFacade().connect(listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testConnectRegisterExternalListenersToUnexposedModule2() throws Exception {
+	public void testConnectRegisterExternalListenersToUnexposedComponent2() throws Exception {
 
-		cluster.asLayer().connect(listenerModule1);
-		cluster.asLayer().connect(listenerModule2);
+		cluster.getFacade().connect(listenerComponent1);
+		cluster.getFacade().connect(listenerComponent2);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule);
+		cluster.connect("notifier", notifierComponent);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testConnectRegisterExternalListenersToExposedModule2() throws Exception {
+	public void testConnectRegisterExternalListenersToExposedComponent2() throws Exception {
 
-		cluster.asLayer().connect(listenerModule1);
-		cluster.asLayer().connect(listenerModule2);
+		cluster.getFacade().connect(listenerComponent1);
+		cluster.getFacade().connect(listenerComponent2);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule, NotifierInterface.class);
+		cluster.connect("notifier", notifierComponent, NotifierInterface.class);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
@@ -443,13 +443,13 @@ public class StandardClusterTest {
 	public void testConnectRegisterInternalListeners() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule);
+		cluster.connect("notifier", notifierComponent);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("listener1-a", listenerModule1);
+		cluster.connect("listener1-a", listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		cluster.connect("listener1-b", listenerModule1);
+		cluster.connect("listener1-b", listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		cluster.connect("listener2", listenerModule2);
+		cluster.connect("listener2", listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
@@ -457,84 +457,84 @@ public class StandardClusterTest {
 	public void testConnectRegisterInternalListeners2() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("listener1-a", listenerModule1);
-		cluster.connect("listener1-b", listenerModule1);
-		cluster.connect("listener2", listenerModule2);
+		cluster.connect("listener1-a", listenerComponent1);
+		cluster.connect("listener1-b", listenerComponent1);
+		cluster.connect("listener2", listenerComponent2);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		cluster.connect("notifier", notifierModule);
+		cluster.connect("notifier", notifierComponent);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
 	public void testDisconnect() throws Exception {
-		fruit.connect("apple", appleModule);
-		assertTrue(fruit.isConnected(appleModule));
-		fruit.disconnect(appleModule);
-		assertFalse(fruit.isConnected(appleModule));
+		fruit.connect("apple", appleComponent);
+		assertTrue(fruit.isConnected(appleComponent));
+		fruit.disconnect(appleComponent);
+		assertFalse(fruit.isConnected(appleComponent));
 	}
 
 	@Test
-	public void testDisconnectInternalModuleThroughLayer() throws Exception {
-		fruit.connect("apple", appleModule);
-		assertTrue(fruit.isConnected(appleModule));
-		//It's possible to disconnect internal module from outside, since it's
-		//  normally impossible to retrieve a reference to the module anyway
-		fruit.asLayer().disconnect(appleModule);
-		assertFalse(fruit.isConnected(appleModule));
+	public void testDisconnectInternalComponentThroughFacade() throws Exception {
+		fruit.connect("apple", appleComponent);
+		assertTrue(fruit.isConnected(appleComponent));
+		//It's possible to disconnect internal component from outside, since it's
+		//  normally impossible to retrieve a reference to the component anyway
+		fruit.getFacade().disconnect(appleComponent);
+		assertFalse(fruit.isConnected(appleComponent));
 	}
 
 	@Test
 	public void testDisconnectUnregisterExternalListeners() throws Exception {
 
-		cluster.connect("notifier", notifierModule);
-		cluster.asLayer().connect(listenerModule1);
-		cluster.asLayer().connect(listenerModule2);
+		cluster.connect("notifier", notifierComponent);
+		cluster.getFacade().connect(listenerComponent1);
+		cluster.getFacade().connect(listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
-		cluster.asLayer().disconnect(listenerModule1);
+		cluster.getFacade().disconnect(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
 	public void testDisconnectUnregisterInternalListeners() throws Exception {
 
-		cluster.connect("notifier", notifierModule);
-		cluster.connect("listener1-a", listenerModule1);
-		cluster.connect("listener1-b", listenerModule1);
-		cluster.connect("listener2", listenerModule2);
-		assertEquals(4, cluster.getInternalModules().size());
+		cluster.connect("notifier", notifierComponent);
+		cluster.connect("listener1-a", listenerComponent1);
+		cluster.connect("listener1-b", listenerComponent1);
+		cluster.connect("listener2", listenerComponent2);
+		assertEquals(4, cluster.getInternalComponents().size());
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 
-		cluster.disconnect(listenerModule1);
-		assertEquals(2, cluster.getInternalModules().size());
+		cluster.disconnect(listenerComponent1);
+		assertEquals(2, cluster.getInternalComponents().size());
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 
 	}
 
 	@Test
-	public void testDisconnectRegisterExternalListenersFromUnexposedModule() throws Exception {
+	public void testDisconnectRegisterExternalListenersFromUnexposedComponent() throws Exception {
 
-		cluster.asLayer().connect(listenerModule1);
-		cluster.asLayer().connect(listenerModule2);
-		cluster.connect("notifier", notifierModule);
-		cluster.asLayer().disconnect(listenerModule2);
+		cluster.getFacade().connect(listenerComponent1);
+		cluster.getFacade().connect(listenerComponent2);
+		cluster.connect("notifier", notifierComponent);
+		cluster.getFacade().disconnect(listenerComponent2);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testDisconnectRegisterExternalListenersFromUnexposedModule2() throws Exception {
+	public void testDisconnectRegisterExternalListenersFromUnexposedComponent2() throws Exception {
 
-		cluster.asLayer().connect(listenerModule1);
-		cluster.asLayer().connect(listenerModule2);
-		cluster.connect("notifier", notifierModule);
-		cluster.disconnect(notifierModule);
+		cluster.getFacade().connect(listenerComponent1);
+		cluster.getFacade().connect(listenerComponent2);
+		cluster.connect("notifier", notifierComponent);
+		cluster.disconnect(notifierComponent);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
-	public void testExposeLayer() {
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
-		Layer basket = fruit.asLayer();
-		basket.connect(appleModule);
+	public void testExposeFacade() {
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
+		Facade basket = fruit.getFacade();
+		basket.connect(appleComponent);
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
@@ -547,17 +547,17 @@ public class StandardClusterTest {
 		}
 		catch (ConfigurationException expected) {
 		}
-		fruit.connect("apple", appleModule);
+		fruit.connect("apple", appleComponent);
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
 		}
-		fruit.disconnect(appleModule);
-		fruit.connect("apple", appleModule, appleModule.getInterfaces());
+		fruit.disconnect(appleComponent);
+		fruit.connect("apple", appleComponent, appleComponent.getInterfaces());
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
-		fruit.disconnect(appleModule);
+		fruit.disconnect(appleComponent);
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
@@ -570,7 +570,7 @@ public class StandardClusterTest {
 	@Test
 	public void testExpose() throws Exception {
 
-		fruit.connect("apple", appleModule);
+		fruit.connect("apple", appleComponent);
 		assertFalse(fruit.isExposed("apple"));
 		fruit.expose("apple", AppleInterface.class);
 		assertTrue(fruit.isExposed("apple"));
@@ -580,7 +580,7 @@ public class StandardClusterTest {
 
 	@Test
 	public void testExpose2() throws Exception {
-		fruit.connect("apple", elstarModule, AppleInterface.class);
+		fruit.connect("apple", elstarComponent, AppleInterface.class);
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
 		fruit.expose("apple", AppleInterface.class);
 		assertEquals(1, fruit.getExposedInterfaces("apple").length);
@@ -591,24 +591,24 @@ public class StandardClusterTest {
 	}
 
 	@Test
-	public void testExposeInjectionInExternalModule1() throws Exception {
-		fruit.connect("banana", bananaModule);
+	public void testExposeInjectionInExternalComponent1() throws Exception {
+		fruit.connect("banana", bananaComponent);
 		try {
 			appleCore.getIntFromBanana();
 			fail();
 		}
 		catch (NullPointerException eexpected) {
 		}
-		fruit.expose("banana", bananaModule.getInterfaces());
-		fruit.asLayer().connect(appleModule);
+		fruit.expose("banana", bananaComponent.getInterfaces());
+		fruit.getFacade().connect(appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
 	@Test
-	public void testExposeInjectionInExternalModule2() throws Exception {
-		fruit.connect("banana", bananaModule);
-		fruit.asLayer().connect(appleModule);
+	public void testExposeInjectionInExternalComponent2() throws Exception {
+		fruit.connect("banana", bananaComponent);
+		fruit.getFacade().connect(appleComponent);
 		try {
 			appleCore.getIntFromBanana();
 			fail();
@@ -616,17 +616,17 @@ public class StandardClusterTest {
 		catch (NullPointerException eexpected) {
 		}
 
-		fruit.expose("banana", bananaModule.getInterfaces());
+		fruit.expose("banana", bananaComponent.getInterfaces());
 
 		assertEquals(27, appleCore.getIntFromBanana());
 	}
 
 
 	@Test
-	public void testExposeInjectionInExternalModule3() throws Exception {
-		fruit.connect("banana", bananaModule);
-		fruit.expose("banana", bananaModule.getInterfaces());
-		fruit.asLayer().connect(appleModule);
+	public void testExposeInjectionInExternalComponent3() throws Exception {
+		fruit.connect("banana", bananaComponent);
+		fruit.expose("banana", bananaComponent.getInterfaces());
+		fruit.getFacade().connect(appleComponent);
 
 		assertEquals(27, appleCore.getIntFromBanana());
 
@@ -646,12 +646,12 @@ public class StandardClusterTest {
 
 
 		//AppleInterface is exposed
-		fruit.connect("elstar", elstarModule, AppleInterface.class);
+		fruit.connect("elstar", elstarComponent, AppleInterface.class);
 		//  so it can be obtained
-		AppleInterface appleProxy = (AppleInterface) fruit.asLayer().getProxy("elstar", AppleInterface.class);
+		AppleInterface appleProxy = (AppleInterface) fruit.getFacade().getProxy("elstar", AppleInterface.class);
 
 		try {
-			ElstarInterface elstarProxy = (ElstarInterface) fruit.asLayer().getProxy("elstar", ElstarInterface.class);
+			ElstarInterface elstarProxy = (ElstarInterface) fruit.getFacade().getProxy("elstar", ElstarInterface.class);
 			fail("ElstarInterface is not supposed to be exposed");
 		}
 		catch (ConfigurationException expected) {

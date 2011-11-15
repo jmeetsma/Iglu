@@ -24,66 +24,66 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A cluster represents a group of interconnected modules.
- * A cluster contains internal modules that are considered to be
- * part of a layer or subsystem. Internal modules may access any interface
- * of other internal modules in the cluster. Proxies for module interfaces
+ * A cluster represents a group of interconnected components.
+ * A cluster contains internal components that are considered to be
+ * part of a layer or subsystem. Internal components may access any interface
+ * of other internal components in the cluster. Proxies for component interfaces
  * are exchanged and injected upon connection.
  * <p/>
- * A cluster may be accessed as layer to which external modules can connect.
- * Internal modules may expose certain interfaces through the layer boundary to external modules.
- * Proxies for these interfaces will be injected upon connection of an external module.
- * An external module is considered as an anonymous, untrusted consumer of the cluster's services.
- * Proxies for external module interfaces are not injected in internal modules.
+ * A cluster may be accessed as facade to which external components can connect.
+ * Internal components may expose certain interfaces through the facade boundary to external components.
+ * Proxies for these interfaces will be injected upon connection of an external component.
+ * An external component is considered as an anonymous, untrusted consumer of the cluster's services.
+ * Proxies for external component interfaces are not injected in internal components.
  *
  * @author jmeetsma
  */
 public interface Cluster {
 
 	/**
-	 * @return a map of connected internal modules, keyed by module ID
+	 * @return a map of connected internal components, keyed by component ID
 	 */
-	Map<String, Module> getInternalModules();
+	Map<String, Component> getInternalComponents();
 
 	/**
-	 * @return a set of connected external modules
+	 * @return a set of connected external components
 	 */
-	Set<Module> getExternalModules();
+	Set<Component> getExternalComponents();
 
 	/**
-	 * Connects internal module.
+	 * Connects internal component.
 	 *
-	 * @param moduleId
-	 * @param module
+	 * @param componentId
+	 * @param component
 	 */
-	void connect(String moduleId, Module module);
+	void connect(String componentId, Component component);
 
 	/**
-	 * Connects internal module and exposes interfaces.
+	 * Connects internal component and exposes interfaces.
 	 *
-	 * @param moduleId
-	 * @param module
+	 * @param componentId
+	 * @param component
 	 * @param exposedInterfaces
 	 */
-	void connect(String moduleId, Module module, Class<?>... exposedInterfaces);
+	void connect(String componentId, Component component, Class<?>... exposedInterfaces);
 
 	/**
-	 * Disconnects internal or external module.
+	 * Disconnects internal or external component.
 	 *
-	 * @param module
+	 * @param component
 	 */
-	void disconnect(Module module);
+	void disconnect(Component component);
 
 	/**
-	 * Updates exposure of interfaces of an internal module.
+	 * Updates exposure of interfaces of an internal component.
 	 *
-	 * @param internalModuleId
+	 * @param internalComponentId
 	 * @param interfaces
 	 */
-	void expose(String internalModuleId, Class<?>... interfaces);
+	void expose(String internalComponentId, Class<?>... interfaces);
 
 	/**
-	 * @return a layer that represents the cluster
+	 * @return a facade that represents the cluster
 	 */
-	Layer asLayer();
+	Facade getFacade();
 }

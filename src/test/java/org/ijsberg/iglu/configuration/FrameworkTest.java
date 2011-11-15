@@ -21,9 +21,9 @@
 package org.ijsberg.iglu.configuration;
 
 import org.ijsberg.iglu.Cluster;
+import org.ijsberg.iglu.Component;
 import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Layer;
-import org.ijsberg.iglu.Module;
+import org.ijsberg.iglu.Facade;
 import org.ijsberg.iglu.sample.configuration.shop.*;
 import org.junit.Test;
 
@@ -45,21 +45,21 @@ public class FrameworkTest {
 	public void testEmbedding() throws Exception {
 
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
-		Module shopModule = new StandardModule(drugstore);
+		Component shopComponent = new StandardComponent(drugstore);
 
-		Shop shop = (Shop) shopModule.getProxy(Shop.class);
+		Shop shop = (Shop) shopComponent.getProxy(Shop.class);
 
-		Class[] implementedInterfaces = shopModule.getInterfaces();
+		Class[] implementedInterfaces = shopComponent.getInterfaces();
 
 		Properties shopProperties = new Properties();
 		shopProperties.setProperty("ShopCode", "ET-27");
 		shopProperties.setProperty("MaxOrdersDeliverablePerDay", "2000");
 		shopProperties.setProperty("MinOrderSize", "10");
 
-		shopModule.setProperties(shopProperties);
+		shopComponent.setProperties(shopProperties);
 
 		ProductInquiryCounter productInquiryCounter = new ProductInquiryCounter();
-		shopModule.setInvocationInterceptor(Shop.class, productInquiryCounter);
+		shopComponent.setInvocationInterceptor(Shop.class, productInquiryCounter);
 
 		shop.findProductById(1);
 		shop.findProductById(2);
@@ -74,68 +74,68 @@ public class FrameworkTest {
 	public void testClustering() throws Exception {
 
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
-		Module shopModule = new StandardModule(drugstore);
+		Component shopComponent = new StandardComponent(drugstore);
 
 		Cluster cluster = new StandardCluster();
-		cluster.connect("Drugstore", shopModule);
+		cluster.connect("Drugstore", shopComponent);
 
 
-		Map<String, Module> modules = cluster.getInternalModules();
-		assertEquals(1, modules.size());
+		Map<String, Component> components = cluster.getInternalComponents();
+		assertEquals(1, components.size());
 
-		Shop shop = (Shop) cluster.getInternalModules().get("Drugstore").getProxy(Shop.class);
+		Shop shop = (Shop) cluster.getInternalComponents().get("Drugstore").getProxy(Shop.class);
 		assertNotNull(shop);
 
 		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
-		Module photoPrintServiceModule = new StandardModule(photoPrintService);
+		Component photoPrintServiceComponent = new StandardComponent(photoPrintService);
 
 		assertFalse(drugstore.hasPhotoPrintService());
-		cluster.connect("PhotoPrintService", photoPrintServiceModule);
+		cluster.connect("PhotoPrintService", photoPrintServiceComponent);
 		assertTrue(drugstore.hasPhotoPrintService());
 
 
 		//
 		ShoppingCenterImpl shoppingCenter = new ShoppingCenterImpl();
-		Module shoppingCenterModule = new StandardModule(shoppingCenter);
+		Component shoppingCenterComponent = new StandardComponent(shoppingCenter);
 
-		cluster.connect("Shopping Center", shoppingCenterModule);
+		cluster.connect("Shopping Center", shoppingCenterComponent);
 		assertEquals(2, shoppingCenter.getListedShopNames().size());
 
 
 	}
 
 	@Test
-	public void testLayering() throws Exception {
+	public void testFacadeing() throws Exception {
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
-		Module shopModule = new StandardModule(drugstore);
+		Component shopComponent = new StandardComponent(drugstore);
 
 		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");
-		Module photoPrintServiceModule = new StandardModule(photoPrintService);
+		Component photoPrintServiceComponent = new StandardComponent(photoPrintService);
 
 		Cluster cluster = new StandardCluster();
-		cluster.connect("PhotoPrintService", photoPrintServiceModule);
-		cluster.connect("Drugstore", shopModule, Shop.class);
+		cluster.connect("PhotoPrintService", photoPrintServiceComponent);
+		cluster.connect("Drugstore", shopComponent, Shop.class);
 
-		Layer serviceLayer = cluster.asLayer();
+		Facade serviceFacade = cluster.getFacade();
 
 		try {
-			serviceLayer.getProxy("PhotoPrintService", PhotoPrintService.class);
+			serviceFacade.getProxy("PhotoPrintService", PhotoPrintService.class);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
 		}
 
-		Shop shop = (Shop) serviceLayer.getProxy("Drugstore", Shop.class);
+		Shop shop = (Shop) serviceFacade.getProxy("Drugstore", Shop.class);
 		assertNotNull(shop);
 
 		BasketImpl basket = new BasketImpl();
-		Module basketModule = new StandardModule(basket);
-		serviceLayer.connect(basketModule);
+		Component basketComponent = new StandardComponent(basket);
+		serviceFacade.connect(basketComponent);
 
 		assertTrue(basket.isShoppingInDrugstore());
 
 		CustomerSurvey customerSurvey = new CustomerSurvey();
-		cluster.connect("customer survey", new StandardModule(customerSurvey));
+		cluster.connect("customer survey", new StandardComponent(customerSurvey));
 
 		assertEquals(1, customerSurvey.getNrofRegisteredBaskets());
 

@@ -31,66 +31,66 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import org.ijsberg.iglu.Cluster;
+import org.ijsberg.iglu.Component;
 import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Module;
 import org.ijsberg.iglu.sample.configuration.*;
 import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class StandardModuleTest {
+public class StandardComponentTest {
 
 	private Apple apple;
-	private StandardModule appleModule;
+	private StandardComponent appleComponent;
 
 	private Elstar elstar;
-	private Module elstarModule;
+	private Component elstarComponent;
 
 	private Notifier notifier;
 	private Listener listener1;
 	private Listener listener2;
-	private Module notifierModule;
-	private Module listenerModule1;
-	private Module listenerModule2;
+	private Component notifierComponent;
+	private Component listenerComponent1;
+	private Component listenerComponent2;
 
 
 	@Before
 	public void setUp() throws Exception {
 		apple = new Apple();
-		appleModule = new StandardModule(apple);
+		appleComponent = new StandardComponent(apple);
 
 		elstar = new Elstar();
-		elstarModule = new StandardModule(elstar);
+		elstarComponent = new StandardComponent(elstar);
 
 		notifier = new Notifier();
 		listener1 = new Listener("listener 1");
 		listener2 = new Listener("listener 2");
-		notifierModule = new StandardModule(notifier);
-		listenerModule1 = new StandardModule(listener1);
-		listenerModule2 = new StandardModule(listener2);
+		notifierComponent = new StandardComponent(notifier);
+		listenerComponent1 = new StandardComponent(listener1);
+		listenerComponent2 = new StandardComponent(listener2);
 	}
 
 	@Test
 	public void testInstantiation() throws Exception {
-		assertEquals(1, appleModule.getInterfaces().length);
+		assertEquals(1, appleComponent.getInterfaces().length);
 	}
 
 	@Test
 	public void testGetInterfaces() throws Exception {
-		assertEquals(1, appleModule.getInterfaces().length);
-		assertEquals(AppleInterface.class, appleModule.getInterfaces()[0]);
+		assertEquals(1, appleComponent.getInterfaces().length);
+		assertEquals(AppleInterface.class, appleComponent.getInterfaces()[0]);
 
-		assertEquals(2, elstarModule.getInterfaces().length);
-		assertEquals(ElstarInterface.class, elstarModule.getInterfaces()[1]);
-		assertEquals(AppleInterface.class, elstarModule.getInterfaces()[0]);
+		assertEquals(2, elstarComponent.getInterfaces().length);
+		assertEquals(ElstarInterface.class, elstarComponent.getInterfaces()[1]);
+		assertEquals(AppleInterface.class, elstarComponent.getInterfaces()[0]);
 
 	}
 
 	@Test
 	public void testGetProxy() throws Exception {
 
-		AppleInterface proxy = (AppleInterface) appleModule.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
 		assertTrue(proxy instanceof AppleInterface);
 		assertFalse(proxy instanceof BananaInterface);
 
@@ -100,7 +100,7 @@ public class StandardModuleTest {
 	@Test
 	public void testGetProxy2() throws Exception {
 
-		ElstarInterface proxy = (ElstarInterface) elstarModule.getProxy(ElstarInterface.class);
+		ElstarInterface proxy = (ElstarInterface) elstarComponent.getProxy(ElstarInterface.class);
 		//proxy implements AppleInterface through ElstarInterface
 		assertTrue(proxy instanceof AppleInterface);
 		//proxy implements 1 interface directly
@@ -114,18 +114,18 @@ public class StandardModuleTest {
 	public void testSetProperties() throws Exception {
 
 		assertNull(apple.getMessage());
-		assertNull(appleModule.getProperties());
+		assertNull(appleComponent.getProperties());
 
 		Properties properties = new Properties();
 		properties.setProperty("message", "Hello World!");
-		appleModule.setProperties(properties);
+		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleModule.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
 		assertEquals("Hello World!", apple.getMessage());
 		assertEquals("Hello World!", proxy.getMessage());
 
-		assertNotNull(appleModule.getProperties());
-		assertEquals(1, appleModule.getSetterInjectedProperties().size());
+		assertNotNull(appleComponent.getProperties());
+		assertEquals(1, appleComponent.getSetterInjectedProperties().size());
 	}
 
 
@@ -133,17 +133,17 @@ public class StandardModuleTest {
 	public void testSetPropertiesInOneSetter() throws Exception {
 
 		Peach peach = new Peach();
-		Module peachModule = new StandardModule(peach);
+		Component peachComponent = new StandardComponent(peach);
 
 		assertNull(peach.getColor());
 
 		Properties properties = new Properties();
-		peachModule.setProperties(properties);
+		peachComponent.setProperties(properties);
 
 		assertEquals("green", peach.getColor());
 
 		properties.setProperty("color", "red");
-		peachModule.setProperties(properties);
+		peachComponent.setProperties(properties);
 
 		assertEquals("red", peach.getColor());
 	}
@@ -153,14 +153,14 @@ public class StandardModuleTest {
 	public void testSetPropertiesWithDuplicateSetter() throws Exception {
 
 		Peach peach = new Peach();
-		Module peachModule = new StandardModule(peach);
+		Component peachComponent = new StandardComponent(peach);
 
 		assertNull(peach.getColor());
 
 		Properties properties = new Properties();
 		properties.setProperty("taste", "sweet");
 		try {
-			peachModule.setProperties(properties);
+			peachComponent.setProperties(properties);
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
@@ -176,15 +176,15 @@ public class StandardModuleTest {
 
 		Properties properties = new Properties();
 		properties.setProperty("someInt", "3");
-		appleModule.setProperties(properties);
+		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleModule.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
 		assertEquals(3, apple.getSomeInt());
 		assertEquals(3, proxy.getSomeInt());
 
 		properties.setProperty("someInt", "three");
 		try {
-			appleModule.setProperties(properties);
+			appleComponent.setProperties(properties);
 			fail("NumberFormatException expected");
 		}
 		catch (NumberFormatException e) {
@@ -196,13 +196,13 @@ public class StandardModuleTest {
 	public void testSetPropertiesAsProperties() throws Exception {
 
 		Peach peach = new Peach();
-		Module peachModule = new StandardModule(peach);
+		Component peachComponent = new StandardComponent(peach);
 		assertNull(peach.getColor());
 		Properties properties = new Properties();
-		peachModule.setProperties(properties);
+		peachComponent.setProperties(properties);
 		assertEquals("green", peach.getColor());
 		properties.setProperty("color", "pinkish");
-		peachModule.setProperties(properties);
+		peachComponent.setProperties(properties);
 		assertEquals("pinkish", peach.getColor());
 
 	}
@@ -210,15 +210,15 @@ public class StandardModuleTest {
 	@Test
 	public void testGetInjectedProperties() throws Exception {
 
-		assertEquals(0, appleModule.getSetterInjectedProperties().size());
+		assertEquals(0, appleComponent.getSetterInjectedProperties().size());
 		Properties properties = new Properties();
 		properties.setProperty("message", "Hello World!");
 		properties.setProperty("foo", "bar");//no corresponding setter
-		appleModule.setProperties(properties);
+		appleComponent.setProperties(properties);
 
-		assertNotNull(appleModule.getProperties());
-		assertEquals(1, appleModule.getSetterInjectedProperties().size());
-		assertTrue(appleModule.getSetterInjectedProperties().containsKey("message"));
+		assertNotNull(appleComponent.getProperties());
+		assertEquals(1, appleComponent.getSetterInjectedProperties().size());
+		assertTrue(appleComponent.getSetterInjectedProperties().containsKey("message"));
 	}
 
 	@Test
@@ -228,13 +228,13 @@ public class StandardModuleTest {
 
 		Properties properties = new Properties();
 		properties.setProperty("message", "Hello");
-		appleModule.setProperties(properties);
+		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleModule.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
 		assertEquals("Hello", apple.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
-		appleModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		appleComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
 		assertEquals("not intercepted", proxy.returnInput("not intercepted"));
@@ -246,20 +246,20 @@ public class StandardModuleTest {
 
 		Properties properties = new Properties();
 		properties.setProperty("message", "Hello");
-		elstarModule.setProperties(properties);
+		elstarComponent.setProperties(properties);
 
-		ElstarInterface proxy = (ElstarInterface) elstarModule.getProxy(ElstarInterface.class);
+		ElstarInterface proxy = (ElstarInterface) elstarComponent.getProxy(ElstarInterface.class);
 		assertEquals("Hello", elstar.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for ElstarInterface is affected, since AppleInterface is declaring class
-		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
-		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" baby"));
+		elstarComponent.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" baby"));
 		assertEquals("Hello baby", proxy.getMessage());
 
-		AppleInterface proxy2 = (AppleInterface) elstarModule.getProxy(AppleInterface.class);
+		AppleInterface proxy2 = (AppleInterface) elstarComponent.getProxy(AppleInterface.class);
 		assertEquals("Hello world", proxy2.getMessage());
 	}
 
@@ -268,27 +268,27 @@ public class StandardModuleTest {
 
 		Properties properties = new Properties();
 		properties.setProperty("message", "Hello");
-		elstarModule.setProperties(properties);
+		elstarComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) elstarModule.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) elstarComponent.getProxy(AppleInterface.class);
 		assertEquals("Hello", elstar.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for AppleInterface not affected
-		elstarModule.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello", proxy.getMessage());
 
-//		elstarModule.setInvocationHandler(ElstarInterface.class, new GetMessageIntercepter(" world"));
-		assertEquals("Hello world", ((ElstarInterface) elstarModule.getProxy(ElstarInterface.class)).getMessage());
+//		elstarComponent.setInvocationHandler(ElstarInterface.class, new GetMessageIntercepter(" world"));
+		assertEquals("Hello world", ((ElstarInterface) elstarComponent.getProxy(ElstarInterface.class)).getMessage());
 
-		elstarModule.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 	}
 
 	@Test
 	public void testSetInvocationHandler4() throws Exception {
 		try {
-			appleModule.getProxy(ElstarInterface.class);
+			appleComponent.getProxy(ElstarInterface.class);
 			fail("apple does not implement ElstarInterface");
 		}
 		catch (IllegalArgumentException expected) {
@@ -298,7 +298,7 @@ public class StandardModuleTest {
 	@Test
 	public void testSetDependency() throws Exception {
 
-		Module bananaModule = new StandardModule(new Banana(27));
+		Component bananaComponent = new StandardComponent(new Banana(27));
 		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
@@ -308,23 +308,23 @@ public class StandardModuleTest {
 		}
 		Cluster fruit = new StandardCluster();
 
-		fruit.asLayer().connect(bananaModule);
+		fruit.getFacade().connect(bananaComponent);
 		try {
-			appleModule.setReference(fruit.asLayer(), "banana", bananaModule.getInterfaces());
+			appleComponent.setReference(fruit.getFacade(), "banana", bananaComponent.getInterfaces());
 			fail("ConfigurationException expected");
 		}
 		catch (ConfigurationException expected) {
 		}
 
 
-		assertEquals(0, appleModule.getInjectedInterfaces("banana").size());
+		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
 
-		fruit.disconnect(bananaModule);
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
+		fruit.disconnect(bananaComponent);
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
 
-		appleModule.setReference(fruit.asLayer(), "banana", bananaModule.getInterfaces());
+		appleComponent.setReference(fruit.getFacade(), "banana", bananaComponent.getInterfaces());
 
-		assertEquals(2, appleModule.getInjectedInterfaces("banana").size());
+		assertEquals(2, appleComponent.getInjectedInterfaces("banana").size());
 		assertEquals(27, apple.getIntFromBanana());
 
 	}
@@ -333,18 +333,18 @@ public class StandardModuleTest {
 	@Test
 	public void testSetDependency2() throws Exception {
 
-		Module bananaModule = new StandardModule(new Banana(27));
+		Component bananaComponent = new StandardComponent(new Banana(27));
 		Cluster fruit = new StandardCluster();
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
 
-		appleModule.setReference(fruit.asLayer(), "banana", BananaInterface.class);
+		appleComponent.setReference(fruit.getFacade(), "banana", BananaInterface.class);
 
-		assertEquals(1, appleModule.getInjectedInterfaces("banana").size());
+		assertEquals(1, appleComponent.getInjectedInterfaces("banana").size());
 		assertEquals(27, apple.getIntFromBanana());
 
-		appleModule.setReference(fruit.asLayer(), "banana", new Class<?>[0]);
+		appleComponent.setReference(fruit.getFacade(), "banana", new Class<?>[0]);
 
-		assertEquals(0, appleModule.getInjectedInterfaces("banana").size());
+		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
 
 
 		try {
@@ -355,12 +355,12 @@ public class StandardModuleTest {
 			//expected;
 		}
 
-		appleModule.setReference(fruit.asLayer(), "banana", BananaInterface.class);
-		assertEquals(1, appleModule.getInjectedInterfaces("banana").size());
+		appleComponent.setReference(fruit.getFacade(), "banana", BananaInterface.class);
+		assertEquals(1, appleComponent.getInjectedInterfaces("banana").size());
 		assertEquals(27, apple.getIntFromBanana());
 
-		appleModule.setReference(fruit.asLayer(), "banana", Serializable.class);
-		assertEquals(1, appleModule.getInjectedInterfaces("banana").size());
+		appleComponent.setReference(fruit.getFacade(), "banana", Serializable.class);
+		assertEquals(1, appleComponent.getInjectedInterfaces("banana").size());
 		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
@@ -374,17 +374,17 @@ public class StandardModuleTest {
 	@Test
 	public void testRemoveDependency() throws Exception {
 
-		assertEquals(0, appleModule.getInjectedInterfaces("banana").size());
+		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
 
-		Module bananaModule = new StandardModule(new Banana(27));
+		Component bananaComponent = new StandardComponent(new Banana(27));
 		Cluster fruit = new StandardCluster();
-		fruit.connect("banana", bananaModule, bananaModule.getInterfaces());
-		appleModule.setReference(fruit.asLayer(), "banana", bananaModule.getInterfaces());
-		assertEquals(2, appleModule.getInjectedInterfaces("banana").size());
+		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
+		appleComponent.setReference(fruit.getFacade(), "banana", bananaComponent.getInterfaces());
+		assertEquals(2, appleComponent.getInjectedInterfaces("banana").size());
 		assertEquals(27, apple.getIntFromBanana());
 
-		appleModule.removeDependency("banana");
-		assertEquals(0, appleModule.getInjectedInterfaces("banana").size());
+		appleComponent.removeDependency("banana");
+		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
 		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
@@ -399,7 +399,7 @@ public class StandardModuleTest {
 	public void testRemoveDependency2() throws Exception {
 
 		Cluster fruit = new StandardCluster();
-		fruit.connect("elstar", elstarModule, elstarModule.getInterfaces());
+		fruit.connect("elstar", elstarComponent, elstarComponent.getInterfaces());
 
 
 	}
@@ -409,7 +409,7 @@ public class StandardModuleTest {
 	public void testRegisterListener() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		notifierModule.register(listenerModule1);
+		notifierComponent.register(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 	}
 
@@ -417,13 +417,13 @@ public class StandardModuleTest {
 	public void testRegisterListenerMultiple() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		notifierModule.register(listenerModule1);
-		notifierModule.register(listenerModule2);
+		notifierComponent.register(listenerComponent1);
+		notifierComponent.register(listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 		//duplicate registration
-		notifierModule.register(listenerModule2);
+		notifierComponent.register(listenerComponent2);
 		//not a listener
-		notifierModule.register(appleModule);
+		notifierComponent.register(appleComponent);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 	}
 
@@ -431,65 +431,65 @@ public class StandardModuleTest {
 	public void testUnregisterListener() throws Exception {
 
 		assertEquals(0, notifier.getNrofRegisteredListeners());
-		notifierModule.register(listenerModule1);
+		notifierComponent.register(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		notifierModule.unregister(listenerModule1);
+		notifierComponent.unregister(listenerComponent1);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
 	public void testUnregisterListenerMultiple() throws Exception {
 
-		notifierModule.register(listenerModule1);
-		notifierModule.register(listenerModule2);
+		notifierComponent.register(listenerComponent1);
+		notifierComponent.register(listenerComponent2);
 		assertEquals(2, notifier.getNrofRegisteredListeners());
 
-		notifierModule.unregister(listenerModule1);
+		notifierComponent.unregister(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
-		notifierModule.unregister(listenerModule1);
+		notifierComponent.unregister(listenerComponent1);
 		assertEquals(1, notifier.getNrofRegisteredListeners());
 
-		notifierModule.unregister(listenerModule2);
+		notifierComponent.unregister(listenerComponent2);
 		assertEquals(0, notifier.getNrofRegisteredListeners());
 	}
 
 	@Test
 	public void testUnregisterListenerNotRegistered() throws Exception {
 
-		notifierModule.unregister(listenerModule1);
+		notifierComponent.unregister(listenerComponent1);
 		//no need to throw
 	}
 
 	@Test
 	public void testInvoke() throws Exception {
 		try {
-			appleModule.invoke("setMessage", "test invoke");
+			appleComponent.invoke("setMessage", "test invoke");
 			fail("setMessage not specified in interface");
 		} catch (NoSuchMethodException setMessageNotSpecifiedInInterface) {};
 
-		Object result = appleModule.invoke("returnInput", "test invoke");
+		Object result = appleComponent.invoke("returnInput", "test invoke");
 		assertEquals("test invoke", result);
 
-		result = appleModule.invoke("returnInput", true, '-', 23);
+		result = appleComponent.invoke("returnInput", true, '-', 23);
 		assertEquals("true-23", result);
 
-		result = appleModule.invoke("returnInput", "false", "+", "12");
+		result = appleComponent.invoke("returnInput", "false", "+", "12");
 		assertEquals("false+12", result);
 
-		result = appleModule.invoke("returnInput", 100);
+		result = appleComponent.invoke("returnInput", 100);
 		assertEquals(100, result);
 
 		try {
-			result = appleModule.invoke("returnInput", "arg2", "arg2");
+			result = appleComponent.invoke("returnInput", "arg2", "arg2");
 			fail("NoSuchMethodException expected");
 		} catch (NoSuchMethodException expected) {};
 
 		try {
-			result = appleModule.invoke("returnInput", "true", "=", "twelve");
+			result = appleComponent.invoke("returnInput", "true", "=", "twelve");
 			fail("NumberFormatException expected");
 		} catch (NumberFormatException expected) {};
 
-		result = appleModule.invoke("returnInput", 0, 65, "12");
+		result = appleComponent.invoke("returnInput", 0, 65, "12");
 		assertEquals("falseA12", result);
 	}
 
