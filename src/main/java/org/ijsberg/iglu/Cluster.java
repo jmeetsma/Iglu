@@ -38,7 +38,7 @@ import java.util.Set;
  *
  * @author jmeetsma
  */
-public interface Cluster {
+public interface Cluster extends Connector {
 
 	/**
 	 * @return a map of connected internal components, keyed by component ID
@@ -51,14 +51,6 @@ public interface Cluster {
 	Set<Component> getExternalComponents();
 
 	/**
-	 * Connects internal component.
-	 *
-	 * @param componentId
-	 * @param component
-	 */
-	void connect(String componentId, Component component);
-
-	/**
 	 * Connects internal component and exposes interfaces.
 	 *
 	 * @param componentId
@@ -66,13 +58,6 @@ public interface Cluster {
 	 * @param exposedInterfaces
 	 */
 	void connect(String componentId, Component component, Class<?>... exposedInterfaces);
-
-	/**
-	 * Disconnects internal or external component.
-	 *
-	 * @param component
-	 */
-	void disconnect(Component component);
 
 	/**
 	 * Updates exposure of interfaces of an internal component.
