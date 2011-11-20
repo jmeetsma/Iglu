@@ -24,6 +24,7 @@ package org.ijsberg.iglu.util.reflection;
 import org.ijsberg.iglu.sample.configuration.*;
 import org.junit.Test;
 
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
