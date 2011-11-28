@@ -18,17 +18,19 @@
  * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu.configuration;
+package org.ijsberg.iglu.configuration.module;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.ijsberg.iglu.Cluster;
-import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Facade;
-import org.ijsberg.iglu.Component;
+import org.ijsberg.iglu.configuration.Cluster;
+import org.ijsberg.iglu.configuration.Component;
+import org.ijsberg.iglu.configuration.ConfigurationException;
+import org.ijsberg.iglu.configuration.Facade;
+import org.ijsberg.iglu.configuration.module.StandardCluster;
+import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.Banana;

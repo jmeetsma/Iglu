@@ -18,12 +18,12 @@
  * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu.configuration;
+package org.ijsberg.iglu.configuration.module;
 
-import org.ijsberg.iglu.Cluster;
-import org.ijsberg.iglu.Component;
-import org.ijsberg.iglu.ConfigurationException;
-import org.ijsberg.iglu.Facade;
+import org.ijsberg.iglu.configuration.Cluster;
+import org.ijsberg.iglu.configuration.Component;
+import org.ijsberg.iglu.configuration.ConfigurationException;
+import org.ijsberg.iglu.configuration.Facade;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;

@@ -20,7 +20,7 @@
 
 package org.ijsberg.iglu.util.reflection;
 
-import org.ijsberg.iglu.configuration.StandardComponent;
+import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;

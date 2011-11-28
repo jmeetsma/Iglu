@@ -18,7 +18,7 @@
  * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu;
+package org.ijsberg.iglu.configuration;
 
 import java.util.Set;
 
