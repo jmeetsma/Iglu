@@ -269,7 +269,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 
-	public void setInvocationInterceptor(Class<?> interfaceClass, InvocationHandler handler) {
+	public void setInvocationIntercepter(Class<?> interfaceClass, InvocationHandler handler) {
 		this.checkInterfaceValidity(interfaceClass);
 		invocationHandlers.put(interfaceClass, handler);
 	}
@@ -296,7 +296,7 @@ public class StandardComponent implements Component, InvocationHandler {
 
 	private Set<Method> getInterfaceMethodsByName(String methodName, int nrofParameters) {
 		Set<Method> retval = new HashSet<Method>();
-		for(Class clasz : interfaces) {
+		for(Class<?> clasz : interfaces) {
 			retval.addAll(ReflectionSupport.getMethodsByName(clasz, methodName, nrofParameters));
 		}
 		return retval;

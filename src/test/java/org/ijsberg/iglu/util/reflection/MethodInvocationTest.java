@@ -20,18 +20,18 @@
 
 package org.ijsberg.iglu.util.reflection;
 
+import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
 import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import static junit.framework.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  */
@@ -91,7 +91,7 @@ public class MethodInvocationTest {
 
 		assertEquals("hello", result);
 
-		appleComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor("Bingo"));
+		appleComponent.setInvocationIntercepter(AppleInterface.class, new GetMessageInterceptor("Bingo"));
 		result = invocation.invoke();
 
 		assertEquals("helloBingo", result);

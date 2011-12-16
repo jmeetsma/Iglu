@@ -270,7 +270,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 * @param requestedInterfaces
 	 */
 	private void ensureComponentExposesInterfaces(Component component, List<Class<?>> requestedInterfaces) {
-		List<Class<?>> componentInterfaces = (List) Arrays.asList(component.getInterfaces());
+		List<Class<?>> componentInterfaces = Arrays.asList(component.getInterfaces());
 		for (Class<?> exposedInterface : requestedInterfaces) {
 			if (!componentInterfaces.contains(exposedInterface)) {
 				throw new IllegalArgumentException("component '" + component + "' does not expose interface " + exposedInterface);
@@ -402,7 +402,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 				this.removeInterfacesForExternalComponents(internalComponentId, this.getInternalComponent(internalComponentId));
 			}
 		}
-		ensureComponentExposesInterfaces(this.getInternalComponent(internalComponentId), (List) Arrays.asList(interfaces));
+		ensureComponentExposesInterfaces(this.getInternalComponent(internalComponentId), Arrays.asList(interfaces));
 		exposedInterfacesByComponentId.put(internalComponentId, new HashSet<Class<?>>(Arrays.asList(interfaces)));
 		this.setInterfacesInExternalComponents(internalComponentId, interfaces);
 	}

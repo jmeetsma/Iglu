@@ -122,7 +122,7 @@ public class ReflectionSupport {
 	public static Object instantiateClass(String className, Object ... initArgs)
 			throws InstantiationException {
 		try {
-			Class c = Class.forName(className);
+			Class<?> c = Class.forName(className);
 			return instantiateClass(c, initArgs);
 		}
 		catch (ClassNotFoundException cnfe) {
@@ -145,7 +145,7 @@ public class ReflectionSupport {
 	public static Object instantiateClass(ClassLoader classloader, String className, Object ... initArgs)
 			throws InstantiationException {
 		try {
-			Class clasz = classloader.loadClass(className);
+			Class<?> clasz = classloader.loadClass(className);
 			return instantiateClass(clasz, initArgs);
 		}
 		catch (ClassNotFoundException cnfe) {
@@ -162,15 +162,15 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	public static Object instantiateClass(Class clasz, Object ... initArgs)
+	public static Object instantiateClass(Class<?> clasz, Object ... initArgs)
 			throws InstantiationException {
 		if (initArgs == null) {
 			initArgs = new Object[0];
 		}
-		Constructor[] constructors = clasz.getConstructors();
+		Constructor<?>[] constructors = clasz.getConstructors();
 		for (int i = 0; i < constructors.length; i++) {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
-				Class[] inputTypes = constructors[i].getParameterTypes();
+				Class<?>[] inputTypes = constructors[i].getParameterTypes();
 				if(inputTypes.length == initArgs.length) {
 					Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 					if (alternativeInitArgs != null) {
@@ -193,7 +193,7 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	private static Object instantiateClass(Class clasz, Constructor constructor, Object ... initArgs) throws InstantiationException {
+	private static Object instantiateClass(Class<?> clasz, Constructor<?> constructor, Object ... initArgs) throws InstantiationException {
 		try {
 			return constructor.newInstance(initArgs);
 		}
@@ -205,7 +205,7 @@ public class ReflectionSupport {
 				throw (Error) ite.getTargetException();
 			}
 			//checked target exceptions are not explicitly logged
-			//occurrance of checked exception can be evaluated by examining the throws clauses
+			//occurrence of checked exception can be evaluated by examining the throws clauses
 			//  of the constructors in the the javadoc
 			throw new InstantiationException("can not instantiate class " +
 					clasz.getName() + " due to exception in constructor with message: " +
@@ -225,7 +225,7 @@ public class ReflectionSupport {
 	 * @param requiredNrofParameters
 	 * @return a set of methods with the given name and number of parameters
 	 */
-	public static Set<Method> getMethodsByName(Class clasz, String methodName, int requiredNrofParameters) {
+	public static Set<Method> getMethodsByName(Class<?> clasz, String methodName, int requiredNrofParameters) {
 		Set<Method> retval = new HashSet<Method>();
 		Method[] methods = clasz.getMethods();
 		for (int i = 0; i < methods.length; i++) {

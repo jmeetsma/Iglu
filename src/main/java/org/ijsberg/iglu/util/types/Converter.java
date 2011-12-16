@@ -158,7 +158,7 @@ public abstract class Converter {
 		return new Character('\0');
 	}
 
-	protected static Object convertToPrimitive(Object source, Class type) {
+	protected static Object convertToPrimitive(Object source, Class<?> type) {
 		if ("byte".equals(type.getName())) {
 			return convertToByte(source);
 		}
@@ -193,7 +193,7 @@ public abstract class Converter {
 	 * @return converted source object
 	 * @throws IllegalArgumentException in case the object can not be converted to the desired type
 	 */
-	public static Object convertToObject(Object source, Class type) {
+	public static Object convertToObject(Object source, Class<?> type) {
 		if (source == null) {
 			return null;
 		}
@@ -227,7 +227,7 @@ public abstract class Converter {
 	 * @return the converted objects
 	 * @throws IllegalArgumentException in case conversion is not possible
 	 */
-	public static Object[] convertToMatchingTypes(Object[] objects, Class[] targetTypes) {
+	public static Object[] convertToMatchingTypes(Object[] objects, Class<?>[] targetTypes) {
 		Object[] alternativeObjects = new Object[objects.length];
 		if (targetTypes.length == objects.length) {
 			for (int j = 0; j < objects.length; j++) {

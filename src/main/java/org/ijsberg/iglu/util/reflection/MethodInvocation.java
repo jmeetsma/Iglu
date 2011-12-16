@@ -121,8 +121,8 @@ public class MethodInvocation {
 		}
 	}
 
-	private static Class[] getInitArgTypes(Object[] initArgs) {
-		Class[] types = new Class[initArgs.length];
+	private static Class<?>[] getInitArgTypes(Object[] initArgs) {
+		Class<?>[] types = new Class[initArgs.length];
 		for (int i = 0; i < initArgs.length; i++) {
 			types[i] = initArgs[i] != null ? initArgs[i].getClass() : null;
 		}
@@ -131,7 +131,7 @@ public class MethodInvocation {
 
 	private void invokePublicMethod(Object impl, Object[] initArgs, Method method)
 			throws InvocationTargetException {
-		Class[] inputTypes = method.getParameterTypes();
+		Class<?>[] inputTypes = method.getParameterTypes();
 		Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 		try {
 			if(invocationHandler != null) {

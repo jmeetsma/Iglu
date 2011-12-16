@@ -235,7 +235,7 @@ public class StandardComponentTest {
 		assertEquals("Hello", apple.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
-		appleComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		appleComponent.setInvocationIntercepter(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
 		assertEquals("not intercepted", proxy.returnInput("not intercepted"));
@@ -254,10 +254,10 @@ public class StandardComponentTest {
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for ElstarInterface is affected, since AppleInterface is declaring class
-		elstarComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationIntercepter(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 
-		elstarComponent.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" baby"));
+		elstarComponent.setInvocationIntercepter(ElstarInterface.class, new GetMessageInterceptor(" baby"));
 		assertEquals("Hello baby", proxy.getMessage());
 
 		AppleInterface proxy2 = (AppleInterface) elstarComponent.getProxy(AppleInterface.class);
@@ -276,13 +276,13 @@ public class StandardComponentTest {
 		assertEquals("Hello", proxy.getMessage());
 
 		//proxy for AppleInterface not affected
-		elstarComponent.setInvocationInterceptor(ElstarInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationIntercepter(ElstarInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello", proxy.getMessage());
 
 //		elstarComponent.setInvocationHandler(ElstarInterface.class, new GetMessageIntercepter(" world"));
 		assertEquals("Hello world", ((ElstarInterface) elstarComponent.getProxy(ElstarInterface.class)).getMessage());
 
-		elstarComponent.setInvocationInterceptor(AppleInterface.class, new GetMessageInterceptor(" world"));
+		elstarComponent.setInvocationIntercepter(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
 	}
 

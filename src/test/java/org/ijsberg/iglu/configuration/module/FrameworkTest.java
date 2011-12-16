@@ -61,7 +61,7 @@ public class FrameworkTest {
 		shopComponent.setProperties(shopProperties);
 
 		ProductInquiryCounter productInquiryCounter = new ProductInquiryCounter();
-		shopComponent.setInvocationInterceptor(Shop.class, productInquiryCounter);
+		shopComponent.setInvocationIntercepter(Shop.class, productInquiryCounter);
 
 		shop.findProductById(1);
 		shop.findProductById(2);

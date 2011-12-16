@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class CustomerSurvey {
 
-	Set registeredBaskets = new HashSet();
+	Set<Basket> registeredBaskets = new HashSet<Basket>();
 
 	public void register(Basket basket) {
 		registeredBaskets.add(basket);

@@ -83,7 +83,7 @@ public interface Component {
 	void register(Component component);
 
 	/**
-	 * Unegisters a previously registered component in case the embedded object implements
+	 * Unregisters a previously registered component in case the embedded object implements
 	 * a method named 'unregister' with a suitable interface.
 	 *
 	 * @param component
@@ -97,13 +97,13 @@ public interface Component {
 	Set<Class<?>> getInjectedInterfaces(String componentId);
 
 	/**
-	 * Sets interceptor for invocations of a particular interface to deal
-	 * with crosscutting concerns.
+	 * Sets intercepter for invocations of a particular interface to deal
+	 * with cross-cutting concerns.
 	 *
 	 * @param interfaceClass interface of which invocations must be intercepted
 	 * @param interceptor
 	 */
-	void setInvocationInterceptor(Class<?> interfaceClass, InvocationHandler interceptor);
+	void setInvocationIntercepter(Class<?> interfaceClass, InvocationHandler interceptor);
 
 	/**
 	 *
