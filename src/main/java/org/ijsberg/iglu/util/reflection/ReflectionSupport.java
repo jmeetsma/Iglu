@@ -167,6 +167,7 @@ public class ReflectionSupport {
 		if (initArgs == null) {
 			initArgs = new Object[0];
 		}
+		//TODO try exactly matching constructor first -> clasz.getConstructor(parameterTypes)
 		Constructor<?>[] constructors = clasz.getConstructors();
 		for (int i = 0; i < constructors.length; i++) {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
