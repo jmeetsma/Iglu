@@ -60,6 +60,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		this.interfaces = ReflectionSupport.getInterfacesForClass(implementation.getClass()).toArray(new Class<?>[0]);
 	}
 
+	@Override
 	/**
 	 * @throws NullPointerException if the cluster does not expose a component with ID componentId
 	 */
@@ -125,6 +126,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 
+	@Override
 	public void unregister(Component component) {
 		Map<Class<?>, Object> registeredListeners = registeredListenersByComponent.get(component);
 		if (registeredListeners != null) {
@@ -181,6 +183,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 
+	@Override
 	public Object getProxy(Class<?> interfaceClass) {
 		this.checkInterfaceValidity(interfaceClass);
 		return Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
@@ -196,11 +199,12 @@ public class StandardComponent implements Component, InvocationHandler {
 		}
 	}
 
-
+	@Override
 	public Class<?>[] getInterfaces() {
 		return interfaces;
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 		for (Object key : properties.keySet()) {
 			//auto_configure_setters
@@ -212,6 +216,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		this.properties = properties;
 	}
 
+	@Override
 	public Properties getProperties() {
 		return properties;
 	}
@@ -233,7 +238,6 @@ public class StandardComponent implements Component, InvocationHandler {
 		keyStrBuf.replace(0, 1, (String.valueOf(keyStrBuf.charAt(0))).toUpperCase());
 		return keyStrBuf.toString();
 	}
-
 
 	private void injectPropertyIfMatchingSetterFound(String key, Object value) {
 		Set<Method> setters = getComponentSettersByPropertyKey(key);
@@ -268,12 +272,13 @@ public class StandardComponent implements Component, InvocationHandler {
 		}
 	}
 
-
+	@Override
 	public void setInvocationIntercepter(Class<?> interfaceClass, InvocationHandler handler) {
 		this.checkInterfaceValidity(interfaceClass);
 		invocationHandlers.put(interfaceClass, handler);
 	}
 
+	@Override
 	public Object invoke(Object proxy, Method method, Object[] parameters)
 			throws Throwable {
 		//get handler for specific proxy interface
@@ -288,6 +293,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		else return method.invoke(implementation, parameters);
 	}
 
+	@Override
 	public Object invoke(String methodName, Object... parameters) throws InvocationTargetException, NoSuchMethodException, IllegalArgumentException {
 		MethodInvocation invocation = new MethodInvocation(this, implementation, methodName,
 				getInterfaceMethodsByName(methodName, parameters.length).toArray(new Method[0]), parameters);
@@ -302,6 +308,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		return retval;
 	}
 
+	@Override
 	public Set<Class<?>> getInjectedInterfaces(String componentId) {
 		Set<Class<?>> retval = new HashSet<Class<?>>();
 		if (injectedProxyTypesByComponentId.containsKey(componentId)) {
