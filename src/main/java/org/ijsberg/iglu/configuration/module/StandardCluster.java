@@ -195,7 +195,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	 * @param component
 	 */
 	private void setDependenciesForNewInternalComponent(String componentId, Component component) {
-		for (String internalComponentId : internalComponentsById.keySet()) {
+		for (String internalComponentId : new HashSet<String>(internalComponentsById.keySet())) {
 			if (!internalComponentId.equals(componentId)) {
 				Component internalComponent = internalComponentsById.get(internalComponentId);
 				internalComponent.setReference(this, componentId, component.getInterfaces());

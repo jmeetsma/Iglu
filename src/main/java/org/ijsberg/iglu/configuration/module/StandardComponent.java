@@ -184,9 +184,10 @@ public class StandardComponent implements Component, InvocationHandler {
 
 
 	@Override
-	public Object getProxy(Class<?> interfaceClass) {
+	//TODO is really CREATE
+	public <T> T getProxy(Class<T> interfaceClass) {
 		this.checkInterfaceValidity(interfaceClass);
-		return Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
+		return (T)Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
 	}
 
 

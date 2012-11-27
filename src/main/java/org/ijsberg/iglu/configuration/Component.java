@@ -30,6 +30,7 @@ import java.util.Set;
  * An object that represents a structural part (component) of an application may be embedded in a component.
  * A component facilitates setting of properties as well as references to other components.
  */
+//TODO preserve type
 public interface Component {
 
 	/**
@@ -53,7 +54,8 @@ public interface Component {
 	 * @param interfaceClass
 	 * @return a proxy for the wrapped object implementing the given interface
 	 */
-	Object getProxy(Class<?> interfaceClass);
+	<T> T getProxy(Class<T> interfaceClass);
+	//Object getProxy(Class<?> interfaceClass);
 
 	/**
 	 * Sets a reference to a component if the embedded class contains an appropriate setter.
