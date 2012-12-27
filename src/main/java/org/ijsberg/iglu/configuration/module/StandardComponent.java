@@ -116,7 +116,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		for (Class<?> interfaceClass : component.getInterfaces()) {
 			try {
 				Method method = implementation.getClass().getMethod(REGISTER_LISTENER_METHOD_NAME, interfaceClass);
-				Object listenerProxy = component.getProxy(interfaceClass);
+				Object listenerProxy = component.createProxy(interfaceClass);
 				invokeMethod(method, listenerProxy);
 				saveRegisteredListenerProxy(component, interfaceClass, listenerProxy);
 			}
@@ -184,10 +184,23 @@ public class StandardComponent implements Component, InvocationHandler {
 
 
 	@Override
-	//TODO is really CREATE
-	public <T> T getProxy(Class<T> interfaceClass) {
+	public <T> T createProxy(Class<T> interfaceClass) {
 		this.checkInterfaceValidity(interfaceClass);
 		return (T)Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
+	}
+
+
+	private HashMap<Class<?>, Object> proxiesByInterface = new HashMap();
+
+	@Override
+	public <T> T getProxy(Class<T> interfaceClass) {
+		if(proxiesByInterface.containsKey(interfaceClass)) {
+			return (T)proxiesByInterface.get(interfaceClass);
+		} else {
+			T proxy = createProxy(interfaceClass);
+			proxiesByInterface.put(interfaceClass, proxy);
+			return proxy;
+		}
 	}
 
 
@@ -283,6 +296,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] parameters)
 			throws Throwable {
 		//get handler for specific proxy interface
+		//TODO improve exception forwarding
 		InvocationHandler handler = invocationHandlers.get(proxy.getClass().getInterfaces()[0]);
 		if (handler == null) {
 			//get handler for interface that declares invoked method

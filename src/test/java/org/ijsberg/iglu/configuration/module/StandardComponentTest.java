@@ -33,8 +33,6 @@ import java.util.Properties;
 import org.ijsberg.iglu.configuration.Cluster;
 import org.ijsberg.iglu.configuration.Component;
 import org.ijsberg.iglu.configuration.ConfigurationException;
-import org.ijsberg.iglu.configuration.module.StandardCluster;
-import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +89,7 @@ public class StandardComponentTest {
 	@Test
 	public void testGetProxy() throws Exception {
 
-		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.createProxy(AppleInterface.class);
 		assertTrue(proxy instanceof AppleInterface);
 		assertFalse(proxy instanceof BananaInterface);
 
@@ -101,7 +99,7 @@ public class StandardComponentTest {
 	@Test
 	public void testGetProxy2() throws Exception {
 
-		ElstarInterface proxy = (ElstarInterface) elstarComponent.getProxy(ElstarInterface.class);
+		ElstarInterface proxy = (ElstarInterface) elstarComponent.createProxy(ElstarInterface.class);
 		//proxy implements AppleInterface through ElstarInterface
 		assertTrue(proxy instanceof AppleInterface);
 		//proxy implements 1 interface directly
@@ -121,7 +119,7 @@ public class StandardComponentTest {
 		properties.setProperty("message", "Hello World!");
 		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.createProxy(AppleInterface.class);
 		assertEquals("Hello World!", apple.getMessage());
 		assertEquals("Hello World!", proxy.getMessage());
 
@@ -179,7 +177,7 @@ public class StandardComponentTest {
 		properties.setProperty("someInt", "3");
 		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.createProxy(AppleInterface.class);
 		assertEquals(3, apple.getSomeInt());
 		assertEquals(3, proxy.getSomeInt());
 
@@ -231,7 +229,7 @@ public class StandardComponentTest {
 		properties.setProperty("message", "Hello");
 		appleComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) appleComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) appleComponent.createProxy(AppleInterface.class);
 		assertEquals("Hello", apple.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
@@ -249,7 +247,7 @@ public class StandardComponentTest {
 		properties.setProperty("message", "Hello");
 		elstarComponent.setProperties(properties);
 
-		ElstarInterface proxy = (ElstarInterface) elstarComponent.getProxy(ElstarInterface.class);
+		ElstarInterface proxy = (ElstarInterface) elstarComponent.createProxy(ElstarInterface.class);
 		assertEquals("Hello", elstar.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
@@ -260,7 +258,7 @@ public class StandardComponentTest {
 		elstarComponent.setInvocationIntercepter(ElstarInterface.class, new GetMessageInterceptor(" baby"));
 		assertEquals("Hello baby", proxy.getMessage());
 
-		AppleInterface proxy2 = (AppleInterface) elstarComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy2 = (AppleInterface) elstarComponent.createProxy(AppleInterface.class);
 		assertEquals("Hello world", proxy2.getMessage());
 	}
 
@@ -271,7 +269,7 @@ public class StandardComponentTest {
 		properties.setProperty("message", "Hello");
 		elstarComponent.setProperties(properties);
 
-		AppleInterface proxy = (AppleInterface) elstarComponent.getProxy(AppleInterface.class);
+		AppleInterface proxy = (AppleInterface) elstarComponent.createProxy(AppleInterface.class);
 		assertEquals("Hello", elstar.getMessage());
 		assertEquals("Hello", proxy.getMessage());
 
@@ -280,7 +278,7 @@ public class StandardComponentTest {
 		assertEquals("Hello", proxy.getMessage());
 
 //		elstarComponent.setInvocationHandler(ElstarInterface.class, new GetMessageIntercepter(" world"));
-		assertEquals("Hello world", ((ElstarInterface) elstarComponent.getProxy(ElstarInterface.class)).getMessage());
+		assertEquals("Hello world", ((ElstarInterface) elstarComponent.createProxy(ElstarInterface.class)).getMessage());
 
 		elstarComponent.setInvocationIntercepter(AppleInterface.class, new GetMessageInterceptor(" world"));
 		assertEquals("Hello world", proxy.getMessage());
@@ -289,7 +287,7 @@ public class StandardComponentTest {
 	@Test
 	public void testSetInvocationHandler4() throws Exception {
 		try {
-			appleComponent.getProxy(ElstarInterface.class);
+			appleComponent.createProxy(ElstarInterface.class);
 			fail("apple does not implement ElstarInterface");
 		}
 		catch (IllegalArgumentException expected) {

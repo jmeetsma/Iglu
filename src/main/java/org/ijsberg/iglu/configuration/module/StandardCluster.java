@@ -304,7 +304,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	public Object getProxy(String componentId, Class<?> exposedInterface) {
 
 		Component component = getInternalComponent(componentId);
-		return component.getProxy(exposedInterface);
+		return component.createProxy(exposedInterface);
 	}
 
 	/**

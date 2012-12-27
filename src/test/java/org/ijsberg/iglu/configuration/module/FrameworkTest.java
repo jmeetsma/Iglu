@@ -24,8 +24,6 @@ import org.ijsberg.iglu.configuration.Cluster;
 import org.ijsberg.iglu.configuration.Component;
 import org.ijsberg.iglu.configuration.ConfigurationException;
 import org.ijsberg.iglu.configuration.Facade;
-import org.ijsberg.iglu.configuration.module.StandardCluster;
-import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.shop.*;
 import org.junit.Test;
 
@@ -49,7 +47,7 @@ public class FrameworkTest {
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
 		Component shopComponent = new StandardComponent(drugstore);
 
-		Shop shop = (Shop) shopComponent.getProxy(Shop.class);
+		Shop shop = (Shop) shopComponent.createProxy(Shop.class);
 
 		Class[] implementedInterfaces = shopComponent.getInterfaces();
 
@@ -85,7 +83,7 @@ public class FrameworkTest {
 		Map<String, Component> components = cluster.getInternalComponents();
 		assertEquals(1, components.size());
 
-		Shop shop = (Shop) cluster.getInternalComponents().get("Drugstore").getProxy(Shop.class);
+		Shop shop = (Shop) cluster.getInternalComponents().get("Drugstore").createProxy(Shop.class);
 		assertNotNull(shop);
 
 		PhotoPrintService photoPrintService = new PhotoPrintServiceImpl("Photo Print Service");

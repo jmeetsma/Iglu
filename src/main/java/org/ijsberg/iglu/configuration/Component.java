@@ -54,8 +54,13 @@ public interface Component {
 	 * @param interfaceClass
 	 * @return a proxy for the wrapped object implementing the given interface
 	 */
+	<T> T createProxy(Class<T> interfaceClass);
+
+	/**
+	 * @param interfaceClass
+	 * @return a proxy for the wrapped object implementing the given interface
+	 */
 	<T> T getProxy(Class<T> interfaceClass);
-	//Object getProxy(Class<?> interfaceClass);
 
 	/**
 	 * Sets a reference to a component if the embedded class contains an appropriate setter.
