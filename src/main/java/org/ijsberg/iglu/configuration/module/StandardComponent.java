@@ -88,7 +88,7 @@ public class StandardComponent implements Component, InvocationHandler {
 		Set<Class<?>> interfacesToBeRemoved = new HashSet<Class<?>>(currentlyInjectedInterfaces);
 		interfacesToBeRemoved.removeAll(exposedInterfaces);
 		currentlyInjectedInterfaces.removeAll(interfacesToBeRemoved);
-		injectNulls(componentId, interfacesToBeRemoved);
+//		injectNulls(componentId, interfacesToBeRemoved);
 
 		Set<Class<?>> interfacesToAdd = new HashSet<Class<?>>(exposedInterfaces);
 		interfacesToAdd.removeAll(currentlyInjectedInterfaces);
@@ -105,7 +105,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	 * @param componentId
 	 */
 	public void removeDependency(String componentId) {
-		injectNulls(componentId, injectedProxyTypesByComponentId.get(componentId));
+//		injectNulls(componentId, injectedProxyTypesByComponentId.get(componentId));
 		injectedProxyTypesByComponentId.remove(componentId);
 	}
 
@@ -171,7 +171,9 @@ public class StandardComponent implements Component, InvocationHandler {
 		return injectedProxyTypes;
 	}
 
+   /*
 
+    //potentially unsafe behavior
 	private void injectNulls(String otherComponentId, Set<Class<?>> interfaces) {
 		for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
 			for (Class<?> interfaceClass : interfaces) {
@@ -181,7 +183,7 @@ public class StandardComponent implements Component, InvocationHandler {
 			}
 		}
 	}
-
+   */
 
 	@Override
 	public <T> T createProxy(Class<T> interfaceClass) {
