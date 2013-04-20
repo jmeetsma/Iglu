@@ -173,10 +173,14 @@ public class ReflectionSupport {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
 				Class<?>[] inputTypes = constructors[i].getParameterTypes();
 				if(inputTypes.length == initArgs.length) {
-					Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
-					if (alternativeInitArgs != null) {
-						return instantiateClass(clasz, constructors[i], alternativeInitArgs);
-					}
+                    try {
+                        Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
+                        if (alternativeInitArgs != null) {
+                            return instantiateClass(clasz, constructors[i], alternativeInitArgs);
+                        }
+                    } catch(IllegalArgumentException e) {
+                        //maybe another one fits
+                    }
 				}
 			}
 		}

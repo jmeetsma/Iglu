@@ -220,7 +220,7 @@ public class ConverterTest {
 			Converter.convertToObject("word", Integer.class);
 			fail("NumberFormatException expected");
 		}
-		catch (NumberFormatException expected) {
+		catch (IllegalArgumentException expected) {
 		}
 	}
 
