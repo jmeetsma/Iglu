@@ -346,27 +346,27 @@ public class StandardComponentTest {
 		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
 
 
-		try {
+/*		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
 		}
 		catch (NullPointerException expected) {
 			//expected;
 		}
-
+  */
 		appleComponent.setReference(fruit.getFacade(), "banana", BananaInterface.class);
 		assertEquals(1, appleComponent.getInjectedInterfaces("banana").size());
 		assertEquals(27, apple.getIntFromBanana());
 
 		appleComponent.setReference(fruit.getFacade(), "banana", Serializable.class);
 		assertEquals(1, appleComponent.getInjectedInterfaces("banana").size());
-		try {
+/*		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
 		}
 		catch (NullPointerException expected) {
 			//expected;
-		}
+		} */
 	}
 
 
@@ -384,14 +384,14 @@ public class StandardComponentTest {
 
 		appleComponent.removeDependency("banana");
 		assertEquals(0, appleComponent.getInjectedInterfaces("banana").size());
-		try {
+/*		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
 		}
 		catch (NullPointerException expected) {
 			//expected;
 		}
-	}
+*/	}
 
 
 	@Test

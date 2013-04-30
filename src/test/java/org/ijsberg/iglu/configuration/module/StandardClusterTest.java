@@ -264,12 +264,12 @@ public class StandardClusterTest {
 
 		assertEquals(0, fruit.getInternalComponents().size());
 
-		try {
+/*		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
 		}
 		catch (NullPointerException e) {
-		}
+		}    */
 
 	}
 
@@ -286,12 +286,12 @@ public class StandardClusterTest {
 
 		assertEquals(0, fruit.getExternalComponents().size());
 
-		try {
+/*		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
 		}
 		catch (NullPointerException e) {
-		}
+		}   */
 
 	}
 
@@ -315,12 +315,12 @@ public class StandardClusterTest {
 
 		assertEquals(1, fruit.getInternalComponents().size());
 
-		try {
+/*		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
 		}
 		catch (NullPointerException e) {
-		}
+		}                        */
 
 	}
 
@@ -336,12 +336,12 @@ public class StandardClusterTest {
 
 		assertEquals(1, fruit.getInternalComponents().size());
 
-		try {
+/*		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
 		}
 		catch (NullPointerException e) {
-		}
+		}  */
 
 	}
 
@@ -634,12 +634,12 @@ public class StandardClusterTest {
 
 		fruit.expose("banana", new Class<?>[0]);
 
-		try {
+/*		try {
 			appleCore.getIntFromBanana();
 			fail();
 		}
 		catch (NullPointerException eexpected) {
-		}
+		}   */
 	}
 
 

@@ -333,4 +333,13 @@ public class StandardComponent implements Component, InvocationHandler {
 		}
 		return retval;
 	}
+
+	public boolean equals(Object other) {
+		return (other instanceof StandardComponent)	&& ((StandardComponent)other).implementation == implementation;
+
+	}
+
+	public int hashCode() {
+		return implementation.hashCode();
+	}
 }
