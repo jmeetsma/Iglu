@@ -79,6 +79,7 @@ public class MethodInvocation {
 	public Object invoke() throws InvocationTargetException, NoSuchMethodException {
 		retval = null;
 		invocationSucceeded = false;
+
 		if(invocationHandler == null) {
 			tryInvokeExactSignature();
 		}
@@ -91,7 +92,7 @@ public class MethodInvocation {
 		if (failedInvocation != null) {
 			throw failedInvocation;
 		}
-		throw new NoSuchMethodException("method not found or arguments " + Arrays.asList(initArgs) + " not suitable for method '" + methodName + "'");
+		throw new NoSuchMethodException("method '" + impl.getClass().getSimpleName() + "." + methodName + "' not found or no suitable arguments " + Arrays.asList(initArgs));
 
 	}
 
@@ -113,6 +114,7 @@ public class MethodInvocation {
 	private void tryInvokeExactSignature() throws InvocationTargetException {
 		try {
 			Method method = impl.getClass().getMethod(methodName, getInitArgTypes(initArgs));
+			System.out.println(method);
 			invokePublicMethod(impl, initArgs, method);
 			invocationSucceeded = true;
 		}

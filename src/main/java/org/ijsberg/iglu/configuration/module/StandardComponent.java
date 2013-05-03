@@ -335,8 +335,8 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 	public boolean equals(Object other) {
-		return (other instanceof StandardComponent)	&& ((StandardComponent)other).implementation == implementation;
-
+		return ((other instanceof StandardComponent)	&& ((StandardComponent)other).implementation == implementation) ||
+				other == implementation;
 	}
 
 	public int hashCode() {
