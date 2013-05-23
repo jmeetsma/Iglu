@@ -27,10 +27,7 @@ import org.ijsberg.iglu.util.reflection.MethodInvocation;
 import org.ijsberg.iglu.util.types.Converter;
 import org.ijsberg.iglu.util.reflection.ReflectionSupport;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -297,17 +294,25 @@ public class StandardComponent implements Component, InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] parameters)
 			throws Throwable {
+
 		//get handler for specific proxy interface
 		//TODO improve exception forwarding
 		InvocationHandler handler = invocationHandlers.get(proxy.getClass().getInterfaces()[0]);
-		if (handler == null) {
-			//get handler for interface that declares invoked method
-			handler = invocationHandlers.get(method.getDeclaringClass());
+		try {
+			if (handler == null) {
+				//get handler for interface that declares invoked method
+				handler = invocationHandlers.get(method.getDeclaringClass());
+			}
+			if (handler != null) {
+				return handler.invoke(implementation, method, parameters);
+			}
+			else return method.invoke(implementation, parameters);
+		} catch (Throwable t) {
+			while((t instanceof UndeclaredThrowableException || t instanceof InvocationTargetException) && (t = t.getCause()) != null) {
+//				System.out.println("-" + t);
+			}
+			throw t;
 		}
-		if (handler != null) {
-			return handler.invoke(implementation, method, parameters);
-		}
-		else return method.invoke(implementation, parameters);
 	}
 
 	@Override
