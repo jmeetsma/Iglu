@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -20,22 +19,17 @@
 
 package org.ijsberg.iglu.configuration.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.Serializable;
-import java.util.Properties;
-
 import org.ijsberg.iglu.configuration.Cluster;
 import org.ijsberg.iglu.configuration.Component;
 import org.ijsberg.iglu.configuration.ConfigurationException;
 import org.ijsberg.iglu.sample.configuration.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.Serializable;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 
 public class StandardComponentTest {
@@ -161,8 +155,7 @@ public class StandardComponentTest {
 		try {
 			peachComponent.setProperties(properties);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 		;
 	}
@@ -185,8 +178,7 @@ public class StandardComponentTest {
 		try {
 			appleComponent.setProperties(properties);
 			fail("NumberFormatException expected");
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			//expected
 		}
 	}
@@ -289,8 +281,7 @@ public class StandardComponentTest {
 		try {
 			appleComponent.createProxy(ElstarInterface.class);
 			fail("apple does not implement ElstarInterface");
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 
@@ -301,8 +292,7 @@ public class StandardComponentTest {
 		try {
 			apple.getIntFromBanana();
 			fail("NulPointerException expected");
-		}
-		catch (NullPointerException expected) {
+		} catch (NullPointerException expected) {
 			//expected;
 		}
 		Cluster fruit = new StandardCluster();
@@ -311,8 +301,7 @@ public class StandardComponentTest {
 		try {
 			appleComponent.setReference(fruit.getFacade(), "banana", bananaComponent.getInterfaces());
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 
 
@@ -391,7 +380,8 @@ public class StandardComponentTest {
 		catch (NullPointerException expected) {
 			//expected;
 		}
-*/	}
+*/
+	}
 
 
 	@Test
@@ -464,7 +454,9 @@ public class StandardComponentTest {
 		try {
 			appleComponent.invoke("setMessage", "test invoke");
 			fail("setMessage not specified in interface");
-		} catch (NoSuchMethodException setMessageNotSpecifiedInInterface) {};
+		} catch (NoSuchMethodException setMessageNotSpecifiedInInterface) {
+		}
+		;
 
 		Object result = appleComponent.invoke("returnInput", "test invoke");
 		assertEquals("test invoke", result);
@@ -481,12 +473,16 @@ public class StandardComponentTest {
 		try {
 			result = appleComponent.invoke("returnInput", "arg2", "arg2");
 			fail("NoSuchMethodException expected");
-		} catch (NoSuchMethodException expected) {};
+		} catch (NoSuchMethodException expected) {
+		}
+		;
 
 		try {
 			result = appleComponent.invoke("returnInput", "true", "=", "twelve");
 			fail("NumberFormatException expected");
-		} catch (NumberFormatException expected) {};
+		} catch (NumberFormatException expected) {
+		}
+		;
 
 		result = appleComponent.invoke("returnInput", 0, 65, "12");
 		assertEquals("falseA12", result);

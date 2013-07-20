@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -15,7 +14,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Iglu. If not, see <http://www.gnu.org/licenses/>.
+ * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.ijsberg.iglu.configuration.module;
@@ -30,9 +29,7 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -121,8 +118,7 @@ public class FrameworkTest {
 		try {
 			serviceFacade.getProxy("PhotoPrintService", PhotoPrintService.class);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 
 		Shop shop = (Shop) serviceFacade.getProxy("Drugstore", Shop.class);

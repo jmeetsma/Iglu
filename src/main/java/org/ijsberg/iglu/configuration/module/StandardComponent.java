@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -24,8 +23,8 @@ import org.ijsberg.iglu.configuration.Component;
 import org.ijsberg.iglu.configuration.ConfigurationException;
 import org.ijsberg.iglu.configuration.Facade;
 import org.ijsberg.iglu.util.reflection.MethodInvocation;
-import org.ijsberg.iglu.util.types.Converter;
 import org.ijsberg.iglu.util.reflection.ReflectionSupport;
+import org.ijsberg.iglu.util.types.Converter;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -65,8 +64,7 @@ public class StandardComponent implements Component, InvocationHandler {
 
 		if (injectedProxyTypesByComponentId.containsKey(componentId)) {
 			resetReference(facade, componentId, interfaces);
-		}
-		else {
+		} else {
 			Set<Class<?>> injectedProxyTypes = injectProxies(componentId, Arrays.asList(interfaces), facade);
 			injectedProxyTypesByComponentId.put(componentId, injectedProxyTypes);
 		}
@@ -116,8 +114,7 @@ public class StandardComponent implements Component, InvocationHandler {
 				Object listenerProxy = component.createProxy(interfaceClass);
 				invokeMethod(method, listenerProxy);
 				saveRegisteredListenerProxy(component, interfaceClass, listenerProxy);
-			}
-			catch (NoSuchMethodException ignore) {
+			} catch (NoSuchMethodException ignore) {
 			}
 		}
 	}
@@ -135,8 +132,7 @@ public class StandardComponent implements Component, InvocationHandler {
 						invokeMethod(method, listenerProxy);
 						registeredListeners.remove(interfaceClass);
 					}
-				}
-				catch (NoSuchMethodException ignore) {
+				} catch (NoSuchMethodException ignore) {
 				}
 			}
 		}
@@ -168,24 +164,24 @@ public class StandardComponent implements Component, InvocationHandler {
 		return injectedProxyTypes;
 	}
 
-   /*
+	/*
 
-    //potentially unsafe behavior
-	private void injectNulls(String otherComponentId, Set<Class<?>> interfaces) {
-		for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
-			for (Class<?> interfaceClass : interfaces) {
-				if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
-					invokeMethod(setter, null);
+		//potentially unsafe behavior
+		private void injectNulls(String otherComponentId, Set<Class<?>> interfaces) {
+			for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
+				for (Class<?> interfaceClass : interfaces) {
+					if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
+						invokeMethod(setter, null);
+					}
 				}
 			}
 		}
-	}
-   */
+	   */
 
 	@Override
 	public <T> T createProxy(Class<T> interfaceClass) {
 		this.checkInterfaceValidity(interfaceClass);
-		return (T)Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
+		return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, this);
 	}
 
 
@@ -193,8 +189,8 @@ public class StandardComponent implements Component, InvocationHandler {
 
 	@Override
 	public <T> T getProxy(Class<T> interfaceClass) {
-		if(proxiesByInterface.containsKey(interfaceClass)) {
-			return (T)proxiesByInterface.get(interfaceClass);
+		if (proxiesByInterface.containsKey(interfaceClass)) {
+			return (T) proxiesByInterface.get(interfaceClass);
 		} else {
 			T proxy = createProxy(interfaceClass);
 			proxiesByInterface.put(interfaceClass, proxy);
@@ -272,15 +268,13 @@ public class StandardComponent implements Component, InvocationHandler {
 	private void invokeMethod(Method method, Object injectingObject) {
 		try {
 			method.invoke(implementation, injectingObject);
-		}
-		catch (InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			if (ite.getCause() instanceof RuntimeException) {
 				throw (RuntimeException) ite.getCause();
 			}
 			throw new RuntimeException("can't invoke method '" + method.getName() + "'" + " with argument " + injectingObject,
 					ite.getCause());
-		}
-		catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e) {
 			throw new RuntimeException("can't invoke method '" + method.getName() + "'" + " with argument " + injectingObject, e);
 		}
 	}
@@ -305,10 +299,9 @@ public class StandardComponent implements Component, InvocationHandler {
 			}
 			if (handler != null) {
 				return handler.invoke(implementation, method, parameters);
-			}
-			else return method.invoke(implementation, parameters);
+			} else return method.invoke(implementation, parameters);
 		} catch (Throwable t) {
-			while((t instanceof UndeclaredThrowableException || t instanceof InvocationTargetException) && (t = t.getCause()) != null) {
+			while ((t instanceof UndeclaredThrowableException || t instanceof InvocationTargetException) && (t = t.getCause()) != null) {
 //				System.out.println("-" + t);
 			}
 			throw t;
@@ -324,7 +317,7 @@ public class StandardComponent implements Component, InvocationHandler {
 
 	private Set<Method> getInterfaceMethodsByName(String methodName, int nrofParameters) {
 		Set<Method> retval = new HashSet<Method>();
-		for(Class<?> clasz : interfaces) {
+		for (Class<?> clasz : interfaces) {
 			retval.addAll(ReflectionSupport.getMethodsByName(clasz, methodName, nrofParameters));
 		}
 		return retval;
@@ -340,7 +333,7 @@ public class StandardComponent implements Component, InvocationHandler {
 	}
 
 	public boolean equals(Object other) {
-		return ((other instanceof StandardComponent)	&& ((StandardComponent)other).implementation == implementation) ||
+		return ((other instanceof StandardComponent) && ((StandardComponent) other).implementation == implementation) ||
 				other == implementation;
 	}
 

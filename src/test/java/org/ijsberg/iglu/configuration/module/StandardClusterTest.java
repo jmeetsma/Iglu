@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -20,28 +19,15 @@
 
 package org.ijsberg.iglu.configuration.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.ijsberg.iglu.configuration.Cluster;
 import org.ijsberg.iglu.configuration.Component;
 import org.ijsberg.iglu.configuration.ConfigurationException;
 import org.ijsberg.iglu.configuration.Facade;
-import org.ijsberg.iglu.configuration.module.StandardCluster;
-import org.ijsberg.iglu.configuration.module.StandardComponent;
-import org.ijsberg.iglu.sample.configuration.Apple;
-import org.ijsberg.iglu.sample.configuration.AppleInterface;
-import org.ijsberg.iglu.sample.configuration.Banana;
-import org.ijsberg.iglu.sample.configuration.BananaInterface;
-import org.ijsberg.iglu.sample.configuration.Elstar;
-import org.ijsberg.iglu.sample.configuration.ElstarInterface;
-import org.ijsberg.iglu.sample.configuration.Listener;
-import org.ijsberg.iglu.sample.configuration.Notifier;
-import org.ijsberg.iglu.sample.configuration.NotifierInterface;
+import org.ijsberg.iglu.sample.configuration.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class StandardClusterTest {
 
@@ -138,8 +124,7 @@ public class StandardClusterTest {
 		try {
 			fruit.getFacade().connect(appleComponent);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 
@@ -149,8 +134,7 @@ public class StandardClusterTest {
 		try {
 			fruit.connect("apple", appleComponent);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 
@@ -160,8 +144,7 @@ public class StandardClusterTest {
 		try {
 			fruit.getFacade().connect(appleComponent);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 
@@ -171,8 +154,7 @@ public class StandardClusterTest {
 		try {
 			fruit.connect("apple", appleComponent);
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 
@@ -207,8 +189,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		}
-		catch (NullPointerException eexpected) {
+		} catch (NullPointerException eexpected) {
 		}
 
 		fruit.connect("banana", bananaComponent, bananaComponent.getInterfaces());
@@ -234,8 +215,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		}
-		catch (NullPointerException eexpected) {
+		} catch (NullPointerException eexpected) {
 		}
 	}
 
@@ -247,8 +227,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		}
-		catch (NullPointerException expected) {
+		} catch (NullPointerException expected) {
 		}
 	}
 
@@ -353,8 +332,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail("NullPointerException expected");
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 		}
 
 		fruit.connect("banana", bananaComponent);
@@ -546,15 +524,13 @@ public class StandardClusterTest {
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 		fruit.connect("apple", appleComponent);
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 		fruit.disconnect(appleComponent);
 		fruit.connect("apple", appleComponent, appleComponent.getInterfaces());
@@ -563,8 +539,7 @@ public class StandardClusterTest {
 		try {
 			fruit.getExposedInterfaces("apple");
 			fail("ConfigurationException expected");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 
@@ -598,8 +573,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		}
-		catch (NullPointerException eexpected) {
+		} catch (NullPointerException eexpected) {
 		}
 		fruit.expose("banana", bananaComponent.getInterfaces());
 		fruit.getFacade().connect(appleComponent);
@@ -614,8 +588,7 @@ public class StandardClusterTest {
 		try {
 			appleCore.getIntFromBanana();
 			fail();
-		}
-		catch (NullPointerException eexpected) {
+		} catch (NullPointerException eexpected) {
 		}
 
 		fruit.expose("banana", bananaComponent.getInterfaces());
@@ -655,8 +628,7 @@ public class StandardClusterTest {
 		try {
 			ElstarInterface elstarProxy = (ElstarInterface) fruit.getFacade().getProxy("elstar", ElstarInterface.class);
 			fail("ElstarInterface is not supposed to be exposed");
-		}
-		catch (ConfigurationException expected) {
+		} catch (ConfigurationException expected) {
 		}
 	}
 }

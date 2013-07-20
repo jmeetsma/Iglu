@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -68,9 +67,9 @@ public interface Component {
 	 * The component may actually have references for every exposed interface.
 	 * This method must also be used to update references in case the exposure of interfaces changes.
 	 *
-	 * @param facade	facade that must expose a component with id componentId and given interfaces
+	 * @param facade      facade that must expose a component with id componentId and given interfaces
 	 * @param componentId ID of the component
-	 * @param interfaces the interfaces the component exposes
+	 * @param interfaces  the interfaces the component exposes
 	 */
 	void setReference(Facade facade, String componentId, Class<?>... interfaces);
 
@@ -113,13 +112,12 @@ public interface Component {
 	void setInvocationIntercepter(Class<?> interfaceClass, InvocationHandler interceptor);
 
 	/**
-	 *
 	 * @param methodName name of a method declared by a component's interface
 	 * @param parameters
 	 * @return
 	 * @throws InvocationTargetException in case the invoked method throws
-	 * @throws NoSuchMethodException in case no suitable method is found
-	 * @throws IllegalArgumentException in case the arguments can not be converted
+	 * @throws NoSuchMethodException     in case no suitable method is found
+	 * @throws IllegalArgumentException  in case the arguments can not be converted
 	 */
 	Object invoke(String methodName, Object... parameters) throws InvocationTargetException, NoSuchMethodException, IllegalArgumentException;
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -24,7 +23,6 @@ package org.ijsberg.iglu.util.reflection;
 import org.ijsberg.iglu.sample.configuration.*;
 import org.junit.Test;
 
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -61,7 +59,8 @@ public class ReflectionSupportTest {
 		try {
 			instance = ReflectionSupport.instantiateClass("java.util.String");
 			fail("InstantiationException expected");
-		} catch(InstantiationException expected) {}
+		} catch (InstantiationException expected) {
+		}
 	}
 
 	@Test
@@ -72,7 +71,8 @@ public class ReflectionSupportTest {
 		try {
 			instance = ReflectionSupport.instantiateClass("java.util.String", "hoppa");
 			fail("InstantiationException expected");
-		} catch(InstantiationException expected) {}
+		} catch (InstantiationException expected) {
+		}
 
 		instance = ReflectionSupport.instantiateClass("java.lang.String", 8);
 		assertEquals("8", instance);
@@ -116,8 +116,7 @@ public class ReflectionSupportTest {
 		try {
 			assertEquals("sweet27", ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{"sweet", "twentyseven"}));
 			fail("IllegalArgumentException expected");
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 }

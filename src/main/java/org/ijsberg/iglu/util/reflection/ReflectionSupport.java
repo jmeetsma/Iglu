@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -50,7 +49,6 @@ public class ReflectionSupport {
 	}
 
 	/**
-	 *
 	 * @param clasz
 	 * @return all interfaces the given class implements directly or implicitly
 	 */
@@ -74,17 +72,16 @@ public class ReflectionSupport {
 	/**
 	 * Arguments do not have to match exactly; they will be converted if possible.
 	 *
-	 * @param impl the object on which the method is invoked
+	 * @param impl       the object on which the method is invoked
 	 * @param methodName name of method to be invoked
-	 * @param arguments zero or more arguments
+	 * @param arguments  zero or more arguments
 	 * @return whatever the method returns
 	 * @throws InvocationTargetException if the invoked method throws
-	 * @throws NoSuchMethodException if no suitable method is found
+	 * @throws NoSuchMethodException     if no suitable method is found
 	 */
 	public static Object invokeMethod(Object impl, String methodName, Object... arguments) throws NoSuchMethodException, InvocationTargetException {
 		return new MethodInvocation(impl, methodName, arguments).invoke();
 	}
-
 
 
 	/**
@@ -99,11 +96,9 @@ public class ReflectionSupport {
 			throws InstantiationException {
 		try {
 			return Class.forName(className).newInstance();
-		}
-		catch (IllegalAccessException iae) {
+		} catch (IllegalAccessException iae) {
 			throw new InstantiationException("can not instantiate class " + className + " with message: " + iae.getClass().getName() + ": " + iae.getMessage());
-		}
-		catch (ClassNotFoundException cnfe) {
+		} catch (ClassNotFoundException cnfe) {
 			throw new InstantiationException("class " + className + " can not be found with message: " + cnfe.getMessage());
 		}
 	}
@@ -119,13 +114,12 @@ public class ReflectionSupport {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public static Object instantiateClass(String className, Object ... initArgs)
+	public static Object instantiateClass(String className, Object... initArgs)
 			throws InstantiationException {
 		try {
 			Class<?> c = Class.forName(className);
 			return instantiateClass(c, initArgs);
-		}
-		catch (ClassNotFoundException cnfe) {
+		} catch (ClassNotFoundException cnfe) {
 			throw new InstantiationException("class " + className + " can not be found with message: " + cnfe.getMessage());
 		}
 	}
@@ -142,13 +136,12 @@ public class ReflectionSupport {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public static Object instantiateClass(ClassLoader classloader, String className, Object ... initArgs)
+	public static Object instantiateClass(ClassLoader classloader, String className, Object... initArgs)
 			throws InstantiationException {
 		try {
 			Class<?> clasz = classloader.loadClass(className);
 			return instantiateClass(clasz, initArgs);
-		}
-		catch (ClassNotFoundException cnfe) {
+		} catch (ClassNotFoundException cnfe) {
 			throw new InstantiationException("class " + className + " can not be found with message: " + cnfe.getMessage());
 		}
 	}
@@ -162,7 +155,7 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	public static Object instantiateClass(Class<?> clasz, Object ... initArgs)
+	public static Object instantiateClass(Class<?> clasz, Object... initArgs)
 			throws InstantiationException {
 		if (initArgs == null) {
 			initArgs = new Object[0];
@@ -172,15 +165,15 @@ public class ReflectionSupport {
 		for (int i = 0; i < constructors.length; i++) {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
 				Class<?>[] inputTypes = constructors[i].getParameterTypes();
-				if(inputTypes.length == initArgs.length) {
-                    try {
-                        Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
-                        if (alternativeInitArgs != null) {
-                            return instantiateClass(clasz, constructors[i], alternativeInitArgs);
-                        }
-                    } catch(IllegalArgumentException e) {
-                        //maybe another one fits
-                    }
+				if (inputTypes.length == initArgs.length) {
+					try {
+						Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
+						if (alternativeInitArgs != null) {
+							return instantiateClass(clasz, constructors[i], alternativeInitArgs);
+						}
+					} catch (IllegalArgumentException e) {
+						//maybe another one fits
+					}
 				}
 			}
 		}
@@ -198,11 +191,10 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	private static Object instantiateClass(Class<?> clasz, Constructor<?> constructor, Object ... initArgs) throws InstantiationException {
+	private static Object instantiateClass(Class<?> clasz, Constructor<?> constructor, Object... initArgs) throws InstantiationException {
 		try {
 			return constructor.newInstance(initArgs);
-		}
-		catch (InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			if (ite.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) ite.getTargetException();
 			}
@@ -217,14 +209,12 @@ public class ReflectionSupport {
 					ite.getTargetException().getClass().getName() +
 					": " + ite.getTargetException().getMessage() +
 					", for init args " + initArgs);
-		}
-		catch (IllegalAccessException iae) {
+		} catch (IllegalAccessException iae) {
 			throw new InstantiationException("can not instantiate class " + clasz.getName() + " with message: " + iae.getClass().getName() + ": " + iae.getMessage() + ", for init args " + initArgs);
 		}
 	}
 
 	/**
-	 *
 	 * @param clasz
 	 * @param methodName
 	 * @param requiredNrofParameters

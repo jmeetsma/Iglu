@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -75,7 +74,7 @@ public abstract class Converter {
 			return new Short(((Number) input).shortValue());
 		}
 		if (input instanceof Character) {
-			return (short)((Character) input).charValue();
+			return (short) ((Character) input).charValue();
 		}
 		return new Short(input.toString());
 	}
@@ -92,7 +91,7 @@ public abstract class Converter {
 			return new Byte(((Number) input).byteValue());
 		}
 		if (input instanceof Character) {
-			return (byte)((Character) input).charValue();
+			return (byte) ((Character) input).charValue();
 		}
 		return new Byte(input.toString());
 	}
@@ -134,7 +133,7 @@ public abstract class Converter {
 			return (Boolean) input;
 		}
 		if (input instanceof Number) {
-			return ((Number)input).doubleValue() != 0;
+			return ((Number) input).doubleValue() != 0;
 		}
 		return Boolean.valueOf(input.toString());
 	}
@@ -189,7 +188,7 @@ public abstract class Converter {
 
 	/**
 	 * @param source
-	 * @param type desired type
+	 * @param type   desired type
 	 * @return converted source object
 	 * @throws IllegalArgumentException in case the object can not be converted to the desired type
 	 */
@@ -206,8 +205,7 @@ public abstract class Converter {
 		if (source instanceof String && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
 			try {
 				return ReflectionSupport.instantiateClass(type, new Object[]{source});
-			}
-			catch (InstantiationException e) {
+			} catch (InstantiationException e) {
 				throw new IllegalArgumentException("can not convert '" + source + "' to type " + type + " with message: " + e.getMessage());
 			}
 		}
@@ -221,7 +219,6 @@ public abstract class Converter {
 	 * Tries to convert the objects in the array into the types specified.
 	 * This is typically useful if a method is invoked command-line by reflection.
 	 *
-	 *
 	 * @param objects
 	 * @param targetTypes needed input types
 	 * @return the converted objects
@@ -233,8 +230,7 @@ public abstract class Converter {
 			for (int j = 0; j < objects.length; j++) {
 				if (objects[j] == null || targetTypes[j] == objects[j].getClass()) {
 					alternativeObjects[j] = objects[j];
-				}
-				else {
+				} else {
 					alternativeObjects[j] = convertToObject(objects[j], targetTypes[j]);
 				}
 			}

@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -135,8 +134,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 				removeDependenciesForInternalComponent(componentId, component);
 				internalComponentsById.remove(componentId);
 			}
-		}
-		else if (isConnectedExternally(component)) {
+		} else if (isConnectedExternally(component)) {
 			removeDependenciesForExternalComponent(component);
 			externalComponents.remove(component);
 		}
@@ -360,8 +358,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		}
 		try {
 			retval = method.invoke(this, arguments);
-		}
-		catch (InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			throw ite.getCause();
 		}
 		return retval;

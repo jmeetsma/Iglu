@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -23,8 +22,8 @@ package org.ijsberg.iglu.util.reflection;
 import org.ijsberg.iglu.util.types.Converter;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -56,9 +55,9 @@ public class MethodInvocation {
 	/**
 	 * Arguments do not have to match exactly; they will be converted if possible.
 	 *
-	 * @param impl the object on which the method is invoked
+	 * @param impl       the object on which the method is invoked
 	 * @param methodName name of method to be invoked
-	 * @param arguments zero or more arguments
+	 * @param arguments  zero or more arguments
 	 */
 	public MethodInvocation(Object impl, String methodName, Object... arguments) {
 		this.impl = impl;
@@ -71,16 +70,15 @@ public class MethodInvocation {
 	}
 
 	/**
-	 *
 	 * @return whatever the method returns
 	 * @throws InvocationTargetException if the invoked method throws
-	 * @throws NoSuchMethodException if no suitable method is found
+	 * @throws NoSuchMethodException     if no suitable method is found
 	 */
 	public Object invoke() throws InvocationTargetException, NoSuchMethodException {
 		retval = null;
 		invocationSucceeded = false;
 
-		if(invocationHandler == null) {
+		if (invocationHandler == null) {
 			tryInvokeExactSignature();
 		}
 		if (!invocationSucceeded) {
@@ -103,8 +101,7 @@ public class MethodInvocation {
 					invokePublicMethod(impl, initArgs, methods[i]);
 					invocationSucceeded = true;
 					return;
-				}
-				catch (IllegalArgumentException iae) {
+				} catch (IllegalArgumentException iae) {
 					failedInvocation = iae;
 				}
 			}
@@ -117,8 +114,7 @@ public class MethodInvocation {
 			System.out.println(method);
 			invokePublicMethod(impl, initArgs, method);
 			invocationSucceeded = true;
-		}
-		catch (NoSuchMethodException e) {
+		} catch (NoSuchMethodException e) {
 			//there are other possibilities to explore
 		}
 	}
@@ -136,13 +132,12 @@ public class MethodInvocation {
 		Class<?>[] inputTypes = method.getParameterTypes();
 		Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 		try {
-			if(invocationHandler != null) {
+			if (invocationHandler != null) {
 				invokeInvocationHandler(impl, alternativeInitArgs, method);
 			} else {
 				retval = method.invoke(impl, alternativeInitArgs);
 			}
-		}
-		catch (IllegalAccessException privateOrProtectedInvoked) {
+		} catch (IllegalAccessException privateOrProtectedInvoked) {
 			//should be impossible since Class.getMethods returns only public methods
 			throw new RuntimeException("illegal (private or protected) method '" + method.getName() + "' invoked", privateOrProtectedInvoked);
 		}
@@ -154,9 +149,9 @@ public class MethodInvocation {
 			retval = invocationHandler.invoke(impl, method, initArgs);
 			return retval;
 		} catch (InvocationTargetException t) {
-			throw (InvocationTargetException)t;
+			throw (InvocationTargetException) t;
 		} catch (IllegalArgumentException t) {
-			throw (IllegalArgumentException)t;
+			throw (IllegalArgumentException) t;
 		} catch (Throwable t) {
 			throw new InvocationTargetException(t);
 		}

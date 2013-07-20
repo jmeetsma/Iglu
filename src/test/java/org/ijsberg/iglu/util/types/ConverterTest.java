@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -40,12 +39,14 @@ public class ConverterTest {
 		try {
 			Converter.convertToInteger("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		try {
 			Converter.convertToInteger(null);
 			fail("NullPointerException expected");
-		} catch(NullPointerException expected) {}
+		} catch (NullPointerException expected) {
+		}
 
 		result = Converter.convertToInteger(3d);
 		assertTrue(result instanceof Integer);
@@ -64,7 +65,8 @@ public class ConverterTest {
 		try {
 			Converter.convertToLong("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		result = Converter.convertToLong(3d);
 		assertTrue(result instanceof Long);
@@ -78,38 +80,40 @@ public class ConverterTest {
 	public void testConvertToShort() {
 		Object result = Converter.convertToShort("27");
 		assertTrue(result instanceof Short);
-		assertEquals((short)27, result);
+		assertEquals((short) 27, result);
 
 		try {
 			Converter.convertToShort("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		result = Converter.convertToShort(3d);
 		assertTrue(result instanceof Short);
-		assertEquals((short)3, result);
+		assertEquals((short) 3, result);
 
 		result = Converter.convertToShort('A');
-		assertEquals((short)65, result);
+		assertEquals((short) 65, result);
 	}
 
 	@Test
 	public void testConvertToByte() {
 		Object result = Converter.convertToByte("27");
 		assertTrue(result instanceof Byte);
-		assertEquals((byte)27, result);
+		assertEquals((byte) 27, result);
 
 		try {
 			Converter.convertToByte("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		result = Converter.convertToByte(3d);
 		assertTrue(result instanceof Byte);
-		assertEquals((byte)3, result);
+		assertEquals((byte) 3, result);
 
 		result = Converter.convertToByte('A');
-		assertEquals((byte)65, result);
+		assertEquals((byte) 65, result);
 	}
 
 	@Test
@@ -121,7 +125,8 @@ public class ConverterTest {
 		try {
 			Converter.convertToFloat("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		result = Converter.convertToFloat(3);
 		assertTrue(result instanceof Float);
@@ -137,7 +142,8 @@ public class ConverterTest {
 		try {
 			Converter.convertToDouble("word");
 			fail("NumberFormatException expected");
-		} catch(NumberFormatException expected) {}
+		} catch (NumberFormatException expected) {
+		}
 
 		result = Converter.convertToDouble(3);
 		assertTrue(result instanceof Double);
@@ -156,7 +162,8 @@ public class ConverterTest {
 		try {
 			Converter.convertToBoolean(null);
 			fail("NullPointerException expected");
-		} catch(NullPointerException expected) {}
+		} catch (NullPointerException expected) {
+		}
 
 		Converter.convertToBoolean("word");
 		assertEquals(false, result);
@@ -187,7 +194,8 @@ public class ConverterTest {
 		try {
 			Converter.convertToCharacter(null);
 			fail("NullPointerException expected");
-		} catch(NullPointerException expected) {}
+		} catch (NullPointerException expected) {
+		}
 
 		result = Converter.convertToCharacter("Aap");
 		assertEquals('A', result);
@@ -219,8 +227,7 @@ public class ConverterTest {
 		try {
 			Converter.convertToObject("word", Integer.class);
 			fail("NumberFormatException expected");
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 
@@ -231,14 +238,12 @@ public class ConverterTest {
 		try {
 			Converter.convertToMatchingTypes(new String[0], new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 		try {
 			Converter.convertToMatchingTypes(new String[]{"word"}, new Class[]{Integer.class});
 			fail("IllegalArgumentException expected");
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 
 		objects = Converter.convertToMatchingTypes(new String[0], new Class[0]);

@@ -1,6 +1,5 @@
 /*
- * Copyright 2011 Jeroen Meetsma
- *
+ * Copyright 2011-2013 Jeroen Meetsma - IJsberg
  *
  * This file is part of Iglu.
  *
@@ -20,18 +19,18 @@
 
 package org.ijsberg.iglu.util.reflection;
 
-import static junit.framework.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.ijsberg.iglu.configuration.module.StandardComponent;
 import org.ijsberg.iglu.sample.configuration.Apple;
 import org.ijsberg.iglu.sample.configuration.AppleInterface;
 import org.ijsberg.iglu.sample.configuration.GetMessageInterceptor;
 import org.junit.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  */
@@ -64,13 +63,15 @@ public class MethodInvocationTest {
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");
-		} catch (NoSuchMethodException expected) {}
+		} catch (NoSuchMethodException expected) {
+		}
 
 		invocation = new MethodInvocation(apple, "absentMethod");
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");
-		} catch (NoSuchMethodException expected) {}
+		} catch (NoSuchMethodException expected) {
+		}
 	}
 
 	@Test
@@ -111,14 +112,16 @@ public class MethodInvocationTest {
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");
-		} catch (NoSuchMethodException expected) {}
+		} catch (NoSuchMethodException expected) {
+		}
 
 		invocation = new MethodInvocation(appleComponent, apple, "absentMessage",
 				ReflectionSupport.getMethodsByName(Apple.class, "setMessage", 0).toArray(new Method[0]));
 		try {
 			invocation.invoke();
 			fail("NoSuchMethodException expected");
-		} catch (NoSuchMethodException expected) {}
+		} catch (NoSuchMethodException expected) {
+		}
 
 	}
 }
