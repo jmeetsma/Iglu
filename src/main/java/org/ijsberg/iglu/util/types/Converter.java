@@ -193,6 +193,7 @@ public abstract class Converter {
 	 * @throws IllegalArgumentException in case the object can not be converted to the desired type
 	 */
 	public static Object convertToObject(Object source, Class<?> type) {
+		//TODO this will not convert Integer to Long objects
 		if (source == null) {
 			return null;
 		}

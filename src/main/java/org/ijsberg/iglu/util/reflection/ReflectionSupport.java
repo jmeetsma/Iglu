@@ -155,7 +155,7 @@ public class ReflectionSupport {
 	 * @return
 	 * @throws InstantiationException
 	 */
-	public static Object instantiateClass(Class<?> clasz, Object... initArgs)
+	public static <T> T instantiateClass(Class<T> clasz, Object... initArgs)
 			throws InstantiationException {
 		if (initArgs == null) {
 			initArgs = new Object[0];
@@ -169,7 +169,7 @@ public class ReflectionSupport {
 					try {
 						Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 						if (alternativeInitArgs != null) {
-							return instantiateClass(clasz, constructors[i], alternativeInitArgs);
+							return (T)instantiateClass(clasz, constructors[i], alternativeInitArgs);
 						}
 					} catch (IllegalArgumentException e) {
 						//maybe another one fits
