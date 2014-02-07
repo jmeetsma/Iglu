@@ -193,7 +193,6 @@ public abstract class Converter {
 	 * @throws IllegalArgumentException in case the object can not be converted to the desired type
 	 */
 	public static Object convertToObject(Object source, Class<?> type) {
-		//TODO this will not convert Integer to Long objects
 		if (source == null) {
 			return null;
 		}
@@ -203,7 +202,7 @@ public abstract class Converter {
 		if (type.isPrimitive()) {
 			return convertToPrimitive(source, type);
 		}
-		if (source instanceof String && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
+		if ((source instanceof String || source instanceof Number) && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
 			try {
 				return ReflectionSupport.instantiateClass(type, new Object[]{source});
 			} catch (InstantiationException e) {
@@ -213,7 +212,7 @@ public abstract class Converter {
 		if (type == String.class) {
 			return source.toString();
 		}
-		throw new IllegalArgumentException("can not convert '" + source + "' to type " + type);
+		throw new IllegalArgumentException("can not convert '" + source + "' (" + source.getClass() + ") to type " + type);
 	}
 
 	/**

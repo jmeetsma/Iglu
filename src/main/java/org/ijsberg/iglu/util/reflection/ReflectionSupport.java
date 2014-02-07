@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -160,6 +161,17 @@ public class ReflectionSupport {
 		if (initArgs == null) {
 			initArgs = new Object[0];
 		}
+		Class<?>[] initArgTypes = getTypesForArgs(initArgs);
+
+		Exception lastException = null;
+
+		try {
+			Constructor<?> constructor = clasz.getConstructor(initArgTypes);
+			return (T)instantiateClass(clasz, constructor, initArgs);
+		} catch (NoSuchMethodException e) {
+			lastException = e;
+		}
+
 		//TODO try exactly matching constructor first -> clasz.getConstructor(parameterTypes)
 		Constructor<?>[] constructors = clasz.getConstructors();
 		for (int i = 0; i < constructors.length; i++) {
@@ -173,11 +185,21 @@ public class ReflectionSupport {
 						}
 					} catch (IllegalArgumentException e) {
 						//maybe another one fits
+						lastException = e;
 					}
 				}
 			}
 		}
-		throw new InstantiationException("can not instantiate class " + clasz.getName() + ": no matching constructor for init args " + initArgs);
+		throw new InstantiationException("can not instantiate class " + clasz.getName() + ": no matching public constructor for init args " + Arrays.asList(initArgTypes) +
+				lastException != null ? "with message " + lastException : "");
+	}
+
+	private static Class<? extends Object>[] getTypesForArgs(Object[] initArgs) {
+		Class<? extends Object>[] result = new Class[initArgs.length];
+		for(int i = 0; i < initArgs.length; i++) {
+			result[i] = initArgs[i].getClass();
+		}
+		return result;
 	}
 
 

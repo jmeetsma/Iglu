@@ -340,4 +340,8 @@ public class StandardComponent implements Component, InvocationHandler {
 	public int hashCode() {
 		return implementation.hashCode();
 	}
+
+	public String toString() {
+		return "component with impl: " + implementation;
+	}
 }
