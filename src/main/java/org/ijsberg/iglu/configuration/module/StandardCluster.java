@@ -88,6 +88,7 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 		ensureComponentExposesInterfaces(component, Arrays.<Class<?>>asList(exposedInterfaces));
 		connect(componentId, component);
 		setExposedInterfaces(componentId, component, exposedInterfaces);
+
 		registerExternalComponentAsListener(componentId, component);
 	}
 
