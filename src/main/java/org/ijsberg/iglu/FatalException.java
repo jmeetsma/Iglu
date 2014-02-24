@@ -17,36 +17,24 @@
  * along with Iglu.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.ijsberg.iglu.configuration;
-
-import org.ijsberg.iglu.FatalException;
+package org.ijsberg.iglu;
 
 /**
- * This exception is thrown if the configuration as envisioned,
- * comprised of component properties and overall assembly, is not feasible.
- * This may be due to unusable settings, missing references etc.
+ * Is thrown if execution of a task is no longer possible due to uncontrollable circumstances.
  */
-public class ConfigurationException extends FatalException {
+public class FatalException extends RuntimeException {
+	public FatalException() {
+	}
 
-	/**
-	 * @param message
-	 */
-	public ConfigurationException(String message) {
+	public FatalException(String message) {
 		super(message);
 	}
 
-	/**
-	 * @param cause
-	 */
-	public ConfigurationException(Throwable cause) {
-		super(cause);
+	public FatalException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ConfigurationException(String message, Throwable cause) {
-		super(message, cause);
+	public FatalException(Throwable cause) {
+		super(cause);
 	}
 }
