@@ -48,18 +48,18 @@
 
     <build>
         <plugins>
-            <task>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-task</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </task>
-            <task>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-task</artifactId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -68,10 +68,10 @@
                         </goals>
                     </execution>
                 </executions>
-            </task>
-            <task>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-task</artifactId>
+                <artifactId>maven-source-plugin</artifactId>
                 <configuration>
                     <attach>true</attach>
                 </configuration>
@@ -84,7 +84,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </task>
+            </plugin>
         </plugins>
 
     </build>
@@ -126,9 +126,9 @@
             </activation>
             <build>
                 <plugins>
-                    <task>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-task</artifactId>
+                        <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.1</version>
                         <executions>
                             <execution>
@@ -139,7 +139,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </task>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
