@@ -111,11 +111,12 @@ public class MethodInvocation {
 	private void tryInvokeExactSignature() throws InvocationTargetException {
 		try {
 			Method method = impl.getClass().getMethod(methodName, getInitArgTypes(initArgs));
-			System.out.println(method);
+			//System.out.println(method);
 			invokePublicMethod(impl, initArgs, method);
 			invocationSucceeded = true;
 		} catch (NoSuchMethodException e) {
 			//there are other possibilities to explore
+            e.printStackTrace();
 		}
 	}
 

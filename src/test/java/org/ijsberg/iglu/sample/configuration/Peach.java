@@ -33,7 +33,7 @@ public class Peach implements PeachInterface {
 		return color;
 	}
 
-	public Integer setTaste(int taste) {
+	public Integer setTaste(Integer taste) {
 		return taste;
 	}
 
