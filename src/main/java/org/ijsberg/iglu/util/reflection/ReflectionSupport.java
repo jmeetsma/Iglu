@@ -24,10 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -148,6 +145,9 @@ public class ReflectionSupport {
 	}
 
 
+	private static HashMap<Class<?>, Constructor<?>> lastUsedConstructors = new HashMap<Class<?>, Constructor<?>>();
+
+
 	/**
 	 * Instantiates a class by invoking a constructor with the given init parameters.
 	 *
@@ -158,21 +158,38 @@ public class ReflectionSupport {
 	 */
 	public static <T> T instantiateClass(Class<T> clasz, Object... initArgs)
 			throws InstantiationException {
+
+		Exception lastException = null;
+
+		Constructor<?> constructor = lastUsedConstructors.get(clasz);
+		if(constructor != null) {
+			try {
+				return (T)instantiateClass(clasz, constructor, initArgs);
+			} catch (Exception e) {
+				//TODO keep statistics
+				lastException = e;
+			}
+		}
+
+
 		if (initArgs == null) {
 			initArgs = new Object[0];
 		}
 		Class<?>[] initArgTypes = getTypesForArgs(initArgs);
 
-		Exception lastException = null;
 
 		try {
-			Constructor<?> constructor = clasz.getConstructor(initArgTypes);
+			//expensive call
+			constructor = clasz.getConstructor(initArgTypes);
+			lastUsedConstructors.put(clasz, constructor);
 			return (T)instantiateClass(clasz, constructor, initArgs);
 		} catch (NoSuchMethodException e) {
 			lastException = e;
 		}
+		return getInstanceForTranslatedArgs(clasz, initArgTypes, lastException, initArgs);
+	}
 
-		//TODO try exactly matching constructor first -> clasz.getConstructor(parameterTypes)
+	private static <T> T getInstanceForTranslatedArgs(Class<T> clasz, Class<?>[] initArgTypes, Exception lastException, Object[] initArgs) throws InstantiationException {
 		Constructor<?>[] constructors = clasz.getConstructors();
 		for (int i = 0; i < constructors.length; i++) {
 			if (Modifier.isPublic(constructors[i].getModifiers())) {
@@ -181,6 +198,7 @@ public class ReflectionSupport {
 					try {
 						Object[] alternativeInitArgs = Converter.convertToMatchingTypes(initArgs, inputTypes);
 						if (alternativeInitArgs != null) {
+							lastUsedConstructors.put(clasz, constructors[i]);
 							return (T)instantiateClass(clasz, constructors[i], alternativeInitArgs);
 						}
 					} catch (IllegalArgumentException e) {
