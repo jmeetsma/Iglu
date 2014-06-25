@@ -290,7 +290,6 @@ public class StandardComponent implements Component, InvocationHandler {
 			throws Throwable {
 
 		//get handler for specific proxy interface
-		//TODO improve exception forwarding
 		InvocationHandler handler = invocationHandlers.get(proxy.getClass().getInterfaces()[0]);
 		try {
 			if (handler == null) {
@@ -301,9 +300,7 @@ public class StandardComponent implements Component, InvocationHandler {
 				return handler.invoke(implementation, method, parameters);
 			} else return method.invoke(implementation, parameters);
 		} catch (Throwable t) {
-			while ((t instanceof UndeclaredThrowableException || t instanceof InvocationTargetException) && (t = t.getCause()) != null) {
-//				System.out.println("-" + t);
-			}
+			while ((t instanceof UndeclaredThrowableException || t instanceof InvocationTargetException) && (t = t.getCause()) != null) {}
 			throw t;
 		}
 	}

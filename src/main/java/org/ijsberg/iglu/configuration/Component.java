@@ -29,7 +29,6 @@ import java.util.Set;
  * An object that represents a structural part (component) of an application may be embedded in a component.
  * A component facilitates setting of properties as well as references to other components.
  */
-//TODO preserve type
 public interface Component {
 
 	/**
@@ -71,7 +70,7 @@ public interface Component {
 	 * @param componentId ID of the component
 	 * @param interfaces  the interfaces the component exposes
 	 */
-	void setReference(Facade facade, String componentId, Class<?>... interfaces);
+	void setReference(Facade facade, String componentId, Class<?> ... interfaces);
 
 	/**
 	 * Removes previously injected proxies for a certain component.

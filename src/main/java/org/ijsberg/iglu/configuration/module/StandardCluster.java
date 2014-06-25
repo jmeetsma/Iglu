@@ -36,10 +36,6 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	private Set<Component> externalComponents = new HashSet<Component>();
 	private HashMap<String, Component> internalComponentsById = new HashMap<String, Component>();
 
-
-	//TODO constructor that takes name as argument
-	//to embed cluster as component within cluster (Facade exposed, Cluster hidden)
-
 	public boolean isConnected(Component component) {
 		return isConnectedInternally(component) || isConnectedExternally(component);
 	}
@@ -55,8 +51,6 @@ public class StandardCluster implements Cluster, Facade, InvocationHandler {
 	public boolean isExposed(String componentId) {
 		return exposedInterfacesByComponentId.containsKey(componentId);
 	}
-
-	//TODO connect method that takes Object as argument and returns StandardComponent
 
 	/**
 	 * Connects a component as internal component
