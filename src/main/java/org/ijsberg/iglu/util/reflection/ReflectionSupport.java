@@ -50,6 +50,7 @@ public class ReflectionSupport {
 	 * @param clasz
 	 * @return all interfaces the given class implements directly or implicitly
 	 */
+	//TODO the next method (commented out) actually works -> test & replace
 	public static ArrayList<Class<?>> getInterfacesForClass(Class<?> clasz) {
 		ArrayList<Class<?>> result = new ArrayList<Class<?>>();
 
@@ -66,6 +67,40 @@ public class ReflectionSupport {
 		}
 		return result;
 	}
+
+	/**
+	 * @param clasz
+	 * @return all interfaces the given class implements directly or implicitly
+	 */
+/*	public static Set<Class<?>> getInterfacesForClass(Class<?> clasz)
+	{
+		Set<Class<?>> result = new HashSet<Class<?>>();
+
+		for(Class<?> interfaceClass : clasz.getInterfaces())
+		{
+			result.add(interfaceClass);
+			result.addAll(getInterfacesForClass(interfaceClass));
+		}
+
+		ArrayList<Class<?>> superClasses = getAllSuperClassesFromClass(clasz);
+		//superClasses.add(clasz);
+
+		for (Class<?> superClass : superClasses) {
+			if(superClass.isInterface())
+			{
+				result.add(superClass);
+			}
+			else
+			{
+				Class<?>[] interfaces = superClass.getInterfaces();
+				for (int j = 0; j < interfaces.length; j++) {
+					result.addAll(getInterfacesForClass(interfaces[j]));
+				}
+			}
+		}
+		return result;
+	}
+*/
 
 	/**
 	 * Arguments do not have to match exactly; they will be converted if possible.
