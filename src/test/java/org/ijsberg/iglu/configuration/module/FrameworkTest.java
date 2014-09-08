@@ -44,7 +44,7 @@ public class FrameworkTest {
 		ShopImpl drugstore = new ShopImpl("The Drugstore");
 		Component shopComponent = new StandardComponent(drugstore);
 
-		Shop shop = (Shop) shopComponent.createProxy(Shop.class);
+		Shop shop = shopComponent.createProxy(Shop.class);
 
 		Class[] implementedInterfaces = shopComponent.getInterfaces();
 
