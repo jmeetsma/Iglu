@@ -290,7 +290,11 @@ public class StandardComponent implements Component, InvocationHandler {
 			throws Throwable {
 
 		//get handler for specific proxy interface
-		InvocationHandler handler = invocationHandlers.get(proxy.getClass().getInterfaces()[0]);
+		InvocationHandler handler = null;
+		Class<?>[] interfaces = proxy.getClass().getInterfaces();
+		if(interfaces.length > 0) {
+			handler = invocationHandlers.get(interfaces[0]);
+		}
 		try {
 			if (handler == null) {
 				//get handler for interface that declares invoked method
