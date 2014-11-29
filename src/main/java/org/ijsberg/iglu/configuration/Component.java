@@ -119,4 +119,6 @@ public interface Component {
 	 * @throws IllegalArgumentException  in case the arguments can not be converted
 	 */
 	Object invoke(String methodName, Object... parameters) throws InvocationTargetException, NoSuchMethodException, IllegalArgumentException;
+
+	boolean implementsInterface(Class<?> interfaceClass);
 }

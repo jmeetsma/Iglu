@@ -345,4 +345,10 @@ public class StandardComponent implements Component, InvocationHandler {
 	public String toString() {
 		return "component with impl: " + implementation;
 	}
+
+
+	@Override
+	public boolean implementsInterface(Class<?> interfaceClass) {
+		return interfaceClass.isAssignableFrom(implementation.getClass());
+	}
 }
