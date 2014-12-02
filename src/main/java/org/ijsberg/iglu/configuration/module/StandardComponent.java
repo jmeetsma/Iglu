@@ -153,9 +153,11 @@ public class StandardComponent implements Component, InvocationHandler {
 	private HashSet<Class<?>> injectProxies(String otherComponentId, Collection<Class<?>> interfaces, Facade facade) {
 		HashSet<Class<?>> injectedProxyTypes = new HashSet<Class<?>>();
 		for (Method setter : getComponentSettersByPropertyKey(otherComponentId)) {
+
 			for (Class<?> interfaceClass : interfaces) {
 				if (setter.getParameterTypes()[0].isAssignableFrom(interfaceClass)) {
 					Object proxy = facade.getProxy(otherComponentId, interfaceClass);
+					System.out.println("injecting proxy for " + interfaceClass.getSimpleName() + " in component " + this.implementation.getClass().getSimpleName());
 					invokeMethod(setter, proxy);
 					injectedProxyTypes.add(interfaceClass);
 				}
