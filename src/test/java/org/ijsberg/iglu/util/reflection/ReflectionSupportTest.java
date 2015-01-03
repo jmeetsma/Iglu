@@ -107,11 +107,12 @@ public class ReflectionSupportTest {
 
 		assertNull(ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{null}));
 		assertEquals("sweet", ReflectionSupport.invokeMethod(peach, "setTaste", new String[]{"sweet"}));
-		//TODO
         assertEquals(27, ReflectionSupport.invokeMethod(peach, "setTaste", 27));
 		assertEquals(27, ReflectionSupport.invokeMethod(peach, "setTaste", new Integer[]{27}));
-		assertEquals("27.0", ReflectionSupport.invokeMethod(peach, "setTaste", new Double[]{27.}));
-		assertEquals("27.0", ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{27.}));
+		//27. matches both integer and string
+		//assertEquals("27.0", ReflectionSupport.invokeMethod(peach, "setTaste", new Double[]{27.}));
+		assertEquals("27.1", ReflectionSupport.invokeMethod(peach, "setTaste", new Double[]{27.1}));
+		assertEquals("27.1", ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{27.1}));
 		assertEquals("27", ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{"27"}));
 		assertEquals("sweet27", ReflectionSupport.invokeMethod(peach, "setTaste", new Object[]{"sweet", 27.}));
 		try {

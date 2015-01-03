@@ -36,6 +36,17 @@ public abstract class Converter {
 		if (input instanceof Integer) {
 			return (Integer) input;
 		}
+		if(input instanceof Double) {
+			if(Math.floor((Double)input) != (Double)input) {
+				throw new IllegalArgumentException("cannot convert double " + input + " to int");
+			}
+		}
+		if(input instanceof Float) {
+			if(Math.floor((Float)input) != (Float)input) {
+				throw new IllegalArgumentException("cannot convert float " + input + " to int");
+			}
+		}
+
 		if (input instanceof Number) {
 			return new Integer(((Number) input).intValue());
 		}
@@ -204,7 +215,8 @@ public abstract class Converter {
 		}
 		if ((source instanceof String || source instanceof Number) && (Number.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))) {
 			try {
-				return ReflectionSupport.instantiateClass(type, new Object[]{source});
+				Object retval = ReflectionSupport.instantiateClass(type, new Object[]{source});
+				return retval;
 			} catch (InstantiationException e) {
 				throw new IllegalArgumentException("can not convert '" + source + "' to type " + type + " with message: " + e.getMessage());
 			}

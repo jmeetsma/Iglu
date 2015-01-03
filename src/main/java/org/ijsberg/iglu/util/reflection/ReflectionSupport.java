@@ -48,13 +48,25 @@ public class ReflectionSupport {
 
 	/**
 	 * @param clasz
+	 * @return a list of all classes the given class extends
+	 */
+	public static <T extends Object> ArrayList<Class<T>> getAllSuperClassesFromClass(Class<?> clasz, Class<T> ultimateSuperType) {
+		ArrayList<Class<T>> result = new ArrayList<Class<T>>();
+		while (clasz.getSuperclass() != null && ultimateSuperType.isAssignableFrom(clasz.getSuperclass())) {
+			result.add((Class<T>)clasz.getSuperclass());
+			clasz = clasz.getSuperclass();
+		}
+		return result;
+	}
+
+	/**
+	 * @param clasz
 	 * @return all interfaces the given class implements directly or implicitly
 	 */
-	//TODO the next method (commented out) actually works -> test & replace
-	public static ArrayList<Class<?>> getInterfacesForClass(Class<?> clasz) {
+	public static ArrayList<Class<?>> getInterfacesForClass(Class<? extends Object> clasz) {
 		ArrayList<Class<?>> result = new ArrayList<Class<?>>();
 
-		ArrayList<Class<?>> superClasses = getAllSuperClassesFromClass(clasz);
+		ArrayList<Class<? extends Object>> superClasses = getAllSuperClassesFromClass(clasz);
 		superClasses.add(clasz);
 
 		for (Class<?> superClass : superClasses) {
@@ -68,39 +80,6 @@ public class ReflectionSupport {
 		return result;
 	}
 
-	/**
-	 * @param clasz
-	 * @return all interfaces the given class implements directly or implicitly
-	 */
-/*	public static Set<Class<?>> getInterfacesForClass(Class<?> clasz)
-	{
-		Set<Class<?>> result = new HashSet<Class<?>>();
-
-		for(Class<?> interfaceClass : clasz.getInterfaces())
-		{
-			result.add(interfaceClass);
-			result.addAll(getInterfacesForClass(interfaceClass));
-		}
-
-		ArrayList<Class<?>> superClasses = getAllSuperClassesFromClass(clasz);
-		//superClasses.add(clasz);
-
-		for (Class<?> superClass : superClasses) {
-			if(superClass.isInterface())
-			{
-				result.add(superClass);
-			}
-			else
-			{
-				Class<?>[] interfaces = superClass.getInterfaces();
-				for (int j = 0; j < interfaces.length; j++) {
-					result.addAll(getInterfacesForClass(interfaces[j]));
-				}
-			}
-		}
-		return result;
-	}
-*/
 
 	/**
 	 * Arguments do not have to match exactly; they will be converted if possible.
@@ -195,7 +174,6 @@ public class ReflectionSupport {
 			throws InstantiationException {
 
 		Exception lastException = null;
-
 		Constructor<?> constructor = lastUsedConstructors.get(clasz);
 		if(constructor != null) {
 			try {
