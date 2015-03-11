@@ -18,6 +18,7 @@
  */
 package org.ijsberg.iglu.util.reflection;
 
+import org.ijsberg.iglu.configuration.ConfigurationException;
 import org.ijsberg.iglu.util.types.Converter;
 
 import java.lang.reflect.Constructor;
@@ -180,7 +181,8 @@ public class ReflectionSupport {
 				return (T)instantiateClass(clasz, constructor, initArgs);
 			} catch (Exception e) {
 				//TODO keep statistics
-				lastException = e;
+				lastException = new ConfigurationException("cannot instantiate class using " +
+						getInstantiationDetails(clasz, initArgs), e);
 			}
 		}
 
@@ -197,9 +199,14 @@ public class ReflectionSupport {
 			lastUsedConstructors.put(clasz, constructor);
 			return (T)instantiateClass(clasz, constructor, initArgs);
 		} catch (NoSuchMethodException e) {
-			lastException = e;
+			lastException = new ConfigurationException("cannot instantiate class using " +
+					getInstantiationDetails(clasz, initArgs), e);
 		}
 		return getInstanceForTranslatedArgs(clasz, initArgTypes, lastException, initArgs);
+	}
+
+	private static String getInstantiationDetails(Class clasz, Object[] initargs) {
+		return clasz.getName() + " with arguments: " + Arrays.asList(initargs);
 	}
 
 	private static <T> T getInstanceForTranslatedArgs(Class<T> clasz, Class<?>[] initArgTypes, Exception lastException, Object[] initArgs) throws InstantiationException {
@@ -216,13 +223,13 @@ public class ReflectionSupport {
 						}
 					} catch (IllegalArgumentException e) {
 						//maybe another one fits
-						lastException = e;
+						lastException = new ConfigurationException("cannot instantiate class using " +
+								getInstantiationDetails(clasz, initArgs), e);
 					}
 				}
 			}
 		}
-		throw new InstantiationException("can not instantiate class " + clasz.getName() + ": no matching public constructor for init args " + Arrays.asList(initArgTypes) +
-				lastException != null ? "with message " + lastException : "");
+		throw new IgluInstantiationException("can not instantiate class " + clasz.getName() + ": no matching public constructor for init args " + Arrays.asList(initArgTypes), lastException);
 	}
 
 	private static Class<? extends Object>[] getTypesForArgs(Object[] initArgs) {
